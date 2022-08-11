@@ -15,7 +15,6 @@
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
-#include "logging.h"
 
 /// ********************************************************************************************************************
 /// using
@@ -44,7 +43,6 @@ public:
    */
   WS2812B(int pin_number, int number_of_leds) : pin_number(pin_number), number_of_leds(number_of_leds), 
                                                 pixels(number_of_leds, pin_number, NEO_GRB + NEO_KHZ800) {
-    LOG_SCOPE;
     assert(pin_number >= 0);
     assert(number_of_leds >= 0);
 #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
@@ -60,11 +58,10 @@ public:
    *         containing RGB values for that LED.
    */
   void update_LED(vector<vector<uint8_t>> v){
-    LOG_SCOPE;
     assert(v.size() == number_of_leds);
     for(int i=0; i < number_of_leds; i++) {
-      assert(v[i].size() == 3);
-      pixels.setPixelColor(i, pixels.Color(v[i][0], v[i][1], v[i][2]));
+      assert(v.at(i).size() == 3);
+      pixels.setPixelColor(i, pixels.Color(v.at(i).at(0), v.at(i).at(1), v.at(i).at(2)));
     }
     pixels.show();
   }
@@ -73,7 +70,6 @@ public:
    * Function made for testing that paint the LED strip with random colors.
    */
   void update_LED_with_random_colors() {
-    LOG_SCOPE;
     vector<vector<uint8_t>> colors;
     for(int i=0; i < number_of_leds; i++) {
       vector<uint8_t> random_rgb = {rand() & 0xff, rand() & 0xff, rand() & 0xff};

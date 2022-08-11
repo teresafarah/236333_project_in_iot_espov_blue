@@ -6,7 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "ws2812b.h"
-#include "logging.h"
+#include "image.h"
 
 /// ********************************************************************************************************************
 /// using
@@ -26,14 +26,16 @@ const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       9;
 /// ********************************************************************************************************************
 
 WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
+Image current_image;
 
 /// ********************************************************************************************************************
 /// SETUP
 /// ********************************************************************************************************************
 
 void setup() {
-  LOG_SCOPE;
+//  LOG_SCOPE;
 	Serial.begin(115200);
+  current_image.update_image_for_testing();
 }
 
 /// ********************************************************************************************************************
@@ -41,8 +43,14 @@ void setup() {
 /// ********************************************************************************************************************
 
 void loop() {
-  LOG_SCOPE;
-  led_strip_1.update_LED_with_random_colors();
-	delay(3000);
+//  LOG_SCOPE;
+  int theta = 0;
+  while (true) {
+    theta = ((theta + 1) % 360);
+    vector<vector<uint8_t>> v = current_image.get_led_strip_colors(theta, 9);
+    led_strip_1.update_LED(v);
+    delay(1);
+  }
+	
 
 }
