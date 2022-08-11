@@ -7,6 +7,7 @@
 #include <vector>
 #include "ws2812b.h"
 #include "image.h"
+#include "hall.h"
 
 /// ********************************************************************************************************************
 /// using
@@ -20,6 +21,7 @@ using namespace std;
 
 const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
 const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       9;
+const int PIN_NUMBER_OF_HALL_SENSOR =           4;
 
 /// ********************************************************************************************************************
 /// global objects
@@ -27,13 +29,13 @@ const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       9;
 
 WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 Image current_image;
+Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
 
 /// ********************************************************************************************************************
 /// SETUP
 /// ********************************************************************************************************************
 
 void setup() {
-//  LOG_SCOPE;
 	Serial.begin(115200);
   current_image.update_image_for_testing();
 }
@@ -43,14 +45,7 @@ void setup() {
 /// ********************************************************************************************************************
 
 void loop() {
-//  LOG_SCOPE;
-  int theta = 0;
-  while (true) {
-    theta = ((theta + 1) % 360);
-    vector<vector<uint8_t>> v = current_image.get_led_strip_colors(theta, 9);
-    led_strip_1.update_LED(v);
-    delay(1);
-  }
-	
-
+  int theta = hall_sensor.get_angle();
+  vector<vector<uint8_t>> v = current_image.get_led_strip_colors(theta, 9);
+  led_strip_1.update_LED(v);
 }
