@@ -19,6 +19,12 @@
 using namespace std;
 
 /// ********************************************************************************************************************
+/// constants
+/// ********************************************************************************************************************
+
+#define PERIOD_TIME_TEST                        0
+
+/// ********************************************************************************************************************
 /// Foward declarations
 /// ********************************************************************************************************************
 
@@ -38,12 +44,18 @@ Hall* current_hall = 0;
 class Hall {
   
   int pin_number;
-  unsigned long time_of_last_detection_in_milliseconds ;
-  int last_period;
+  unsigned long time_of_last_detection_in_microseconds ;
+  unsigned long last_period;
+#if PERIOD_TIME_TEST
+  bool to_print;
+#endif
 
 public:
 
-  Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_milliseconds(millis()), last_period(1000) {
+  Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()), last_period(1000000) {
+#if PERIOD_TIME_TEST
+    to_print = false;
+#endif
     pinMode(pin_number, INPUT);
     assert(current_hall == 0);
     current_hall = this;
@@ -51,28 +63,32 @@ public:
   }
 
   void printHallReading() {
-    int hallVal = digitalRead(pin_number);
-    Serial.println(hallVal);
+    cout << " last_period = " << last_period << "\n";
   }
 
 
   void magnet_detected_on_pin() {
-    Serial.println("Magnet detected!");
-    unsigned long new_time = millis();
-    last_period = new_time - time_of_last_detection_in_milliseconds;
-    if (last_period == 0){
-      last_period = 1;
-    }
-    time_of_last_detection_in_milliseconds = new_time;
+    unsigned long new_time = micros();
+    last_period = new_time - time_of_last_detection_in_microseconds;
+    time_of_last_detection_in_microseconds = new_time;
+#if PERIOD_TIME_TEST
+    to_print = true;
+#endif
   }
 
   int get_angle() {
-    int current_delta = (millis() - time_of_last_detection_in_milliseconds) % last_period;
-    cout << "current_delta = " << current_delta << endl;
+#if PERIOD_TIME_TEST
+    if (to_print){
+      to_print = false;
+      printHallReading();
+    }
+#endif
+    if (last_period == 0){
+      last_period = 1;
+    }
+    int current_delta = (micros() - time_of_last_detection_in_microseconds) % last_period;
     float percentage_of_circle = ((float)current_delta) / last_period;
-    cout << "percentage_of_circle = " << percentage_of_circle << endl;
     float float_angle = percentage_of_circle * 360;
-    cout << "float_angle = " << float_angle << endl;
     int angle = (float)float_angle;
     return angle;
   }
@@ -84,7 +100,6 @@ public:
 /// ********************************************************************************************************************
 
 void magnet_detect(){
-  Serial.println("Magnet detected!");
   assert(current_hall != 0);
   current_hall->magnet_detected_on_pin();
 }

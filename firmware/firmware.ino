@@ -2,7 +2,6 @@
 /// includes
 /// ********************************************************************************************************************
 
-
 #include <iostream>
 #include <vector>
 #include "ws2812b.h"
@@ -23,13 +22,15 @@ const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
 const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       9;
 const int PIN_NUMBER_OF_HALL_SENSOR =           4;
 
+#define TIME_TEST                               0
+
 /// ********************************************************************************************************************
 /// global objects
 /// ********************************************************************************************************************
 
 WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
-Image current_image;
 Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
+Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 
 /// ********************************************************************************************************************
 /// SETUP
@@ -45,7 +46,16 @@ void setup() {
 /// ********************************************************************************************************************
 
 void loop() {
-  int theta = hall_sensor.get_angle();
-  vector<vector<uint8_t>> v = current_image.get_led_strip_colors(theta, 9);
-  led_strip_1.update_LED(v);
+  while(true) {
+#if TIME_TEST
+    unsigned long checkpoint_0 = micros();
+#endif
+    int theta = hall_sensor.get_angle();
+    vector<uint32_t>& v = current_image.get_led_strip_colors(theta);
+    led_strip_1.update_LED_fast(v);
+#if TIME_TEST
+    unsigned long checkpoint_3 = micros();
+    cout << "Image Update time = " << checkpoint_3 - checkpoint_0 << endl;
+#endif
+  }
 }
