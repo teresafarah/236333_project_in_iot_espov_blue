@@ -75,8 +75,14 @@ public:
 
     for (int i = 0; i < diameter_in_pixels; ++i){
       for (int j = 0; j < diameter_in_pixels; ++j){
-        if (i  == 35){
-          red.at(i).at(j) = 255;
+        if (i % 5 == 0){
+          if (i % 3 == 0){
+            red.at(i).at(j) = 255;
+          } else if (i % 3 == 1) {
+            green.at(i).at(j) = 255;
+          } else {
+            blue.at(i).at(j) = 255;
+          }
         }
       }
     }

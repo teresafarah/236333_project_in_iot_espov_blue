@@ -26,6 +26,9 @@ using namespace std;
 #define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT                        1
 #define PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE                    0
 
+const float alpha = 0.1;
+const float beta = 1 - alpha;
+
 /// ********************************************************************************************************************
 /// Foward declarations
 /// ********************************************************************************************************************
@@ -48,76 +51,72 @@ class Hall {
   int pin_number;
   unsigned long time_of_last_detection_in_microseconds ;
   unsigned long last_period;
-#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-  bool to_print;
-#endif
+  float moving_average;
+  bool did_interrupt_just_occur;
 
 public:
 
-  Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()), last_period(1000000) {
-#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-    to_print = false;
-#endif
+  Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()), 
+                          last_period(1000000), moving_average(1000000), did_interrupt_just_occur(false) {
     pinMode(pin_number, INPUT); 
-//    analogSetPinAttenuation(pin_number, ADC_2_5db);
     assert(current_hall == 0);
     current_hall = this;
     attachInterrupt(digitalPinToInterrupt(pin_number), magnet_detect, RISING);
   }
 
-#if PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE
-  void printHallReading() {
-    int analog_hall_reading = analogRead(pin_number); //Read the sensor
-    int digital_hall_reading = digitalRead(pin_number);
-    Serial.print("analog_hall_reading = ");
-    Serial.print(analog_hall_reading);
-    Serial.print("\t\t digital_hall_reading = ");
-    Serial.println(digital_hall_reading);
-  }
-#endif
 
-#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-  void printHallLastPeriod() {
-    Serial.print("last_period = ");
-    Serial.println(last_period);
-    print_to_bt("last_period = ");
-    String thisString = String(last_period);
-    print_to_bt(thisString);
-    print_to_bt("\n");
-  }
+  void printHallReading() {
+#if PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE
+    if (micros() % 100 == 0) {
+      int analog_hall_reading = analogRead(pin_number); //Read the sensor
+      int digital_hall_reading = digitalRead(pin_number);
+      Serial.print("analog_hall_reading = ");
+      Serial.print(analog_hall_reading);
+      Serial.print("\t\t digital_hall_reading = ");
+      Serial.println(digital_hall_reading);
+    }
 #endif
+  }
+
+
+
+  void printHallLastPeriod() {
+#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
+//    Serial.print("last_period = ");
+//    Serial.print(last_period);
+//    Serial.print(", moving_average = ");
+//    Serial.println(moving_average);
+    print_to_bt("last_period = ");
+    print_to_bt(String(last_period));
+    print_to_bt(", moving_average = ");
+    print_to_bt(String(moving_average));
+    print_to_bt("\n");
+#endif
+  }
+
 
 
   void magnet_detected_on_pin() {
     unsigned long new_time = micros();
     unsigned long potential_last_period = new_time - time_of_last_detection_in_microseconds;
     // protect from multiple interrupts that are very close together
-    if (potential_last_period > 100) {
-      last_period = new_time - time_of_last_detection_in_microseconds;
+    if (potential_last_period > 50000) { // no less than 50 ms (cannot handle more than 1200 rpm)
+      last_period = potential_last_period;
       time_of_last_detection_in_microseconds = new_time;
-#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-      to_print = true;
-#endif
+      did_interrupt_just_occur = true;
     }
   }
 
   int get_angle() {
-#if PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE
-  if (micros() % 100 == 0) { // with prob 1 / 100
     printHallReading();
-  }
-#endif
-#if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-    if (to_print){
-      to_print = false;
+    if (did_interrupt_just_occur){
+      did_interrupt_just_occur = false;
+      moving_average = (moving_average * beta) + (last_period * alpha);
       printHallLastPeriod();
     }
-#endif
-    if (last_period == 0){
-      last_period = 1;
-    }
-    int current_delta = (micros() - time_of_last_detection_in_microseconds) % last_period;
-    float percentage_of_circle = ((float)current_delta) / last_period;
+    int T = (int)floor(moving_average);
+    int current_delta = (micros() - time_of_last_detection_in_microseconds) % T;
+    float percentage_of_circle = ((float)current_delta) / T;
     float float_angle = percentage_of_circle * 360;
     int angle = (float)float_angle;
     return angle;
