@@ -36,8 +36,7 @@ class Image {
   /// ******************************************************************************************************************
 
   T led_strip_1;
-  int radius_in_pixels;
-  int height_and_width;
+  int diameter_in_pixels;
   vector<vector<uint32_t>> angle_to_strip;
   
 public:
@@ -49,24 +48,23 @@ public:
   /*
    * Constructor, creates an object that manages an image in memory.
    */
-  Image(const T& led_strip_1, int number_of_pixels_on_led_strip) : led_strip_1(led_strip_1), radius_in_pixels(number_of_pixels_on_led_strip) {
-    assert(0 < radius_in_pixels);
-    assert(radius_in_pixels < 100); // just checking but might be more
-    height_and_width = 2 * radius_in_pixels + 1; // make room for one empty pixels in the middle of the circle
-    
+  Image(const T& led_strip_1, int number_of_pixels_on_led_strip) : led_strip_1(led_strip_1), diameter_in_pixels(number_of_pixels_on_led_strip) {
+    assert(0 < diameter_in_pixels);
+    assert(diameter_in_pixels < 100); // just checking but might be more
+    assert(diameter_in_pixels % 2 == 1); // extremely messy to calculate when number of pixels is not uneven
   }
 
   void update_image(const vector<vector<uint8_t>>& red, const vector<vector<uint8_t>>& green, const vector<vector<uint8_t>>& blue){
     assert(check_that_image_is_square(red, green, blue));
-    assert(red.size() == height_and_width);
+    assert(red.size() == diameter_in_pixels);
     fill_angle_to_strip_vector(red, green, blue);
   }
 
   void update_image_for_testing() {
-    vector<vector<uint8_t>> zeros(height_and_width);
-    for (int i = 0; i < height_and_width; ++i){
-      zeros.at(i) = vector<uint8_t>(height_and_width);
-      for (int j = 0; j < height_and_width; j++){
+    vector<vector<uint8_t>> zeros(diameter_in_pixels);
+    for (int i = 0; i < diameter_in_pixels; ++i){
+      zeros.at(i) = vector<uint8_t>(diameter_in_pixels);
+      for (int j = 0; j < diameter_in_pixels; j++){
         zeros.at(i).at(j) = 0;
       }
     }
@@ -75,21 +73,12 @@ public:
     vector<vector<uint8_t>> green = zeros;
     vector<vector<uint8_t>> blue = zeros;
 
-    vector<vector<int>> red_positions = {
-      {6,5},  {7,5},  {8,5},  {9,5},  {10,5},  {11,5},  {12,5},
-      {6,6},                                            {12,6},
-      {6,7},                                            {12,7},
-      {6,8},                                            {12,8},
-      {6,9},                                            {12,9},
-      {6,10}, {7,10}, {8,10}, {9,10}, {10,10}, {11,10}, {12,10},
-      {6,11},                                           {12,11},
-      {6,12},                                           {12,12},
-      {6,13},                                           {12,13},
-      };
-    for (int i = 0; i < red_positions.size(); ++i){
-      int x = red_positions.at(i).at(0);
-      int y = red_positions.at(i).at(1);
-      red.at(x).at(y) = 255;
+    for (int i = 0; i < diameter_in_pixels; ++i){
+      for (int j = 0; j < diameter_in_pixels; ++j){
+        if (i  == 35){
+          red.at(i).at(j) = 255;
+        }
+      }
     }
     
     update_image(red, green, blue);
@@ -118,19 +107,24 @@ private:
   }
 
   vector<vector<int>> get_relavent_positions(int angle_relative_to_x){
-    double x0, y0, dx, dy;
-    x0 = y0 = ((double)height_and_width) / 2;
-    dx = cos (((double)angle_relative_to_x) * PI / 180.0 );
-    dy = sin (((double)angle_relative_to_x) * PI / 180.0 );
+    double x0 = ((double)diameter_in_pixels) / 2;
+    double y0 = x0;
+    double dx = cos (((double)angle_relative_to_x) * PI / 180.0 );
+    double dy = sin (((double)angle_relative_to_x) * PI / 180.0 );
     vector<vector<int>> result;
-    for (int i = 1; i <= radius_in_pixels; ++i){
+    int from = -(diameter_in_pixels / 2);
+    int to = (diameter_in_pixels / 2);
+    for (int i = from; i <= to ; ++i){
+      double x_as_real_number = x0 + (dx * i);
+      double y_as_real_number = y0 + (dy * i);
       /// floor rounds down, ceiling rounds up, and truncate rounds towards zero.
-      int x = (int)trunc(x0 + (dx * i)); // can't be round since sometimes that goes out of bounds
-      int y = (int)trunc(y0 + (dy * i));
-      assert(0 <= x && x < height_and_width);
-      assert(0 <= y && y < height_and_width);
+      int x = (int)floor(x_as_real_number); // can't be round since sometimes that goes out of bounds
+      int y = (int)floor(y_as_real_number);
+      assert(0 <= x && x < diameter_in_pixels);
+      assert(0 <= y && y < diameter_in_pixels);
       result.push_back({x, y});
     }
+    assert(result.size() == diameter_in_pixels);
     return result;
   }
 
