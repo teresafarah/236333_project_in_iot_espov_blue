@@ -92,7 +92,7 @@ public:
     unsigned long new_time = micros();
     unsigned long potential_last_period = new_time - time_of_last_detection_in_microseconds;
     // protect from multiple interrupts that are very close together
-    if (potential_last_period > 20) {
+    if (potential_last_period > 100) {
       last_period = new_time - time_of_last_detection_in_microseconds;
       time_of_last_detection_in_microseconds = new_time;
 #if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
