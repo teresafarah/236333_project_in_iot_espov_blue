@@ -23,7 +23,7 @@ const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
 const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       71;
 const int PIN_NUMBER_OF_HALL_SENSOR =           4;
 
-#define PRINT_TIME_OF_LED_UPDATE                               0
+#define PRINT_TIME_OF_LED_UPDATE                               1
 
 /// ********************************************************************************************************************
 /// global objects
@@ -60,14 +60,15 @@ void loop() {
     unsigned long checkpoint_3 = micros();
 #if PRINT_TIME_OF_LED_UPDATE
     if (loop_number % 10000 == 0){
-      Serial.print("Theta calculation time = ");
-      Serial.print(checkpoint_1 - checkpoint_0);
-      Serial.print(", LED vector finding time = ");
-      Serial.print(checkpoint_2 - checkpoint_1);
-      Serial.print(", updating LED time = ");
-      Serial.print(checkpoint_3 - checkpoint_2);
-      Serial.print(", total image Update time = ");
-      Serial.println(checkpoint_3 - checkpoint_0);      
+      print_to_bt("Theta calculation time = ");
+      print_to_bt(String(checkpoint_1 - checkpoint_0));
+      print_to_bt(", LED vector finding time = ");
+      print_to_bt(String(checkpoint_2 - checkpoint_1));
+      print_to_bt(", updating LED time = ");
+      print_to_bt(String(checkpoint_3 - checkpoint_2));
+      print_to_bt(", total image Update time = ");
+      print_to_bt(String(checkpoint_3 - checkpoint_0));
+      print_to_bt("\n");
     }
 #endif
   }

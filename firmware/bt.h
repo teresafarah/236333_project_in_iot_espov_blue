@@ -8,7 +8,7 @@
 /// includes
 /// ********************************************************************************************************************
 
-#define BLUETOOTH_ON  1
+#define BLUETOOTH_ON  0
 
 #if BLUETOOTH_ON
 
@@ -48,6 +48,8 @@ void print_to_bt(const String& string1){
   for (int i = 0; i < string1.length(); ++i){
     SerialBT.write(string1.charAt(i));
   }
+#else
+  Serial.print(string1);
 #endif
 }
 
@@ -55,6 +57,5 @@ void begin_serial_bt_connection() {
 #if BLUETOOTH_ON
   SerialBT.begin("MATESP32Bluetooth");
   Serial.println("Bluetooth Started! Ready to pair...");
-  print_to_bt("Bluetooth Started! Ready to pair...");
 #endif
 }

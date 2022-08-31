@@ -26,7 +26,7 @@ using namespace std;
 #define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT                        1
 #define PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE                    0
 
-const float alpha = 0.1;
+const float alpha = 0.02;
 const float beta = 1 - alpha;
 
 /// ********************************************************************************************************************
@@ -70,10 +70,11 @@ public:
     if (micros() % 100 == 0) {
       int analog_hall_reading = analogRead(pin_number); //Read the sensor
       int digital_hall_reading = digitalRead(pin_number);
-      Serial.print("analog_hall_reading = ");
-      Serial.print(analog_hall_reading);
-      Serial.print("\t\t digital_hall_reading = ");
-      Serial.println(digital_hall_reading);
+      print_to_bt("analog_hall_reading = ");
+      print_to_bt(String(analog_hall_reading));
+      print_to_bt("\t\t digital_hall_reading = ");
+      print_to_bt(String(digital_hall_reading));
+      print_to_bt("\n");
     }
 #endif
   }
@@ -82,10 +83,6 @@ public:
 
   void printHallLastPeriod() {
 #if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-//    Serial.print("last_period = ");
-//    Serial.print(last_period);
-//    Serial.print(", moving_average = ");
-//    Serial.println(moving_average);
     print_to_bt("last_period = ");
     print_to_bt(String(last_period));
     print_to_bt(", moving_average = ");
