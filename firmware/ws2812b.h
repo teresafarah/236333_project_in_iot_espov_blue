@@ -15,6 +15,7 @@
 #ifdef __AVR__
  #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
 #endif
+#include "bt.h"
 
 /// ********************************************************************************************************************
 /// using
@@ -82,7 +83,7 @@ public:
   void update_LED_fast(const vector<uint32_t>& v){
     assert(v.size() == number_of_leds);
     for(int i=0; i < number_of_leds; i++) {
-      strip.setPixelColor(i, v.at(i));
+      strip.setPixelColor(i, v[i]);
     }
     strip.show();
   }
@@ -97,6 +98,26 @@ public:
       colors.push_back(random_rgb);
     }
     update_LED(colors);
+  }
+
+    /*
+   * Function made for testing the max brightness of the LED strip.
+   */
+  void perform_LED_brightness_test() {
+    while (true) {
+      for (uint8_t brightness = 0; brightness <= 255; brightness++){
+        print_to_bt("brightness = ");
+        print_to_bt(String(brightness));
+        print_to_bt("\n");
+        vector<vector<uint8_t>> colors;
+        for(int i=0; i < number_of_leds; i++) {
+          vector<uint8_t> random_rgb = {brightness, brightness, brightness};
+          colors.push_back(random_rgb);
+        }
+        update_LED(colors);
+        delay(100);
+      }
+    }
   }
 
 };

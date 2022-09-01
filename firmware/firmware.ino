@@ -20,7 +20,7 @@ using namespace std;
 /// ********************************************************************************************************************
 
 const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
-const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       71;
+const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       63;
 const int PIN_NUMBER_OF_HALL_SENSOR =           4;
 
 #define PRINT_TIME_OF_LED_UPDATE                               1
@@ -48,6 +48,7 @@ void setup() {
 /// ********************************************************************************************************************
 
 void loop() {
+  // led_strip_1.perform_LED_brightness_test();
   int loop_number = 0;
   while(true) {
     loop_number ++;
