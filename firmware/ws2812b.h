@@ -83,7 +83,7 @@ public:
   void update_LED_fast(const vector<uint32_t>& v){
     assert(v.size() == number_of_leds);
     for(int i=0; i < number_of_leds; i++) {
-      strip.setPixelColor(i, v[i]);
+      strip.setPixelColor(i, v.at(i));
     }
     strip.show();
   }
