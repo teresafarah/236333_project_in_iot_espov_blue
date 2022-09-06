@@ -23,7 +23,7 @@ using namespace std;
 /// constants
 /// ********************************************************************************************************************
 
-#define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT                        1
+#define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT                        0
 #define PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE                    0
 
 const float alpha = 0.02;
@@ -53,11 +53,14 @@ class Hall {
   unsigned long last_period;
   float moving_average;
   bool did_interrupt_just_occur;
+  unsigned long max_period;
+  unsigned long min_period;
 
 public:
 
   Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()), 
-                          last_period(1000000), moving_average(1000000), did_interrupt_just_occur(false) {
+                          last_period(1000000), moving_average(1000000), did_interrupt_just_occur(false),
+                          max_period(1000000), min_period(1000000) {
     pinMode(pin_number, INPUT); 
     assert(current_hall == 0);
     current_hall = this;
@@ -91,6 +94,18 @@ public:
 #endif
   }
 
+  void printHallStats() {
+    print_to_bt("moving_average = ");
+    print_to_bt(String(moving_average));
+    print_to_bt(", max_period = ");
+    print_to_bt(String(max_period));
+    print_to_bt(", min_period = ");
+    print_to_bt(String(min_period));
+    print_to_bt("\n");
+    min_period = last_period;
+    max_period = last_period;
+  }
+
 
 
   void magnet_detected_on_pin() {
@@ -109,14 +124,16 @@ public:
     if (did_interrupt_just_occur){
       did_interrupt_just_occur = false;
       moving_average = (moving_average * beta) + (last_period * alpha);
+      max_period = max(last_period, max_period);
+      min_period = min(last_period, min_period);
       printHallLastPeriod();
     }
     int T = (int)floor(moving_average);
     int current_delta = (micros() - time_of_last_detection_in_microseconds) % T;
     float percentage_of_circle = ((float)current_delta) / T;
     float float_angle = percentage_of_circle * 360;
-    int angle = (float)float_angle;
-    return angle;
+    int rounded_angle = (int)float_angle;
+    return rounded_angle;
   }
 
 };

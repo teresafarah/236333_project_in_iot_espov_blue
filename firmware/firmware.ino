@@ -48,7 +48,6 @@ void setup() {
 /// ********************************************************************************************************************
 
 void loop() {
-  // led_strip_1.perform_LED_brightness_test();
   int loop_number = 0;
   while(true) {
     loop_number ++;
@@ -70,6 +69,7 @@ void loop() {
       print_to_bt(", total image Update time = ");
       print_to_bt(String(checkpoint_3 - checkpoint_0));
       print_to_bt("\n");
+      hall_sensor.printHallStats();
     }
 #endif
   }
