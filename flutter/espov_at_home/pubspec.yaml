@@ -89,3 +89,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/images/splash_logo.jpg
+  fonts:
+    - family: Julius
+      fonts:
+        - asset: assets/fonts/JuliusSansOne-Regular.ttf
+    - family: Russo
+      fonts:
+        - asset: assets/fonts/RussoOne-Regular.ttf
