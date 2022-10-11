@@ -21,168 +21,168 @@ import 'package:espov_at_home/starting_display.dart';
 
 
 //pick image from prev app attempt////////////////////////////////////////////
-class PhotoChoice extends StatefulWidget {
-  const PhotoChoice();
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-
-  @override
-  State<PhotoChoice> createState() => _PhotoChoiceState();
-}
-
-class _PhotoChoiceState extends State<PhotoChoice> {
-
-  File? image;
-
-  Future pickImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-
-      if(image == null) return;
-
-      final imageTemp = File(image.path);
-
-      setState(() => this.image = imageTemp);
-
-      //find wigth and height part
-      var tmp_decoded = await decodeImageFromList(imageTemp.readAsBytesSync());
-      int my_width = tmp_decoded.width;
-      int my_height = tmp_decoded.height;
-      print('printing width and height');
-      print(my_width);
-      print(my_height);
-
-      // resize
-      ImageProperties properties = await FlutterNativeImage.getImageProperties(image.path);
-      File compressedFile = await FlutterNativeImage.compressImage(image.path,quality: 100,
-          targetWidth: 63,
-          targetHeight: 63);
-
-      final compressed_image_temp = compressedFile;
-      var tmp_comp_decoded = await decodeImageFromList(compressed_image_temp.readAsBytesSync());
-      int my_comp_width = tmp_comp_decoded.width;
-      int my_comp_height = tmp_comp_decoded.height;
-      print('printing compressed width and height');
-      print(my_comp_width);
-      print(my_comp_height);
-
-
-
-      final inputImg = await compressed_image_temp.readAsBytes(); // Converts the file to UInt8List
-
-      final decoder = Imagi.JpegDecoder();
-      final decodedImg = decoder.decodeImage(inputImg);
-      final decodedBytes = decodedImg!.getBytes(format: Imagi.Format.rgb);
-
-      List<List<List<int>>> imgArr = [] ;
-      assert(decodedImg != null);
-      for(int y = 0; y < decodedImg!.height; y++) {
-        imgArr.add([]);
-        for(int x = 0; x < decodedImg!.width; x++) {
-          int red = decodedBytes[y*decodedImg.width*3 + x*3];
-          int green = decodedBytes[y*decodedImg.width*3 + x*3 + 1];
-          int blue = decodedBytes[y*decodedImg.width*3 + x*3 + 2];
-          imgArr[y].add([red, green, blue]);
-          print([red,green,blue]);
-        }
-      }
-      print('printing imgArr.length');
-
-
-
-
-
-
-
-
-      setState(() => this.image = compressed_image_temp);
-
-
-
-
-
-
-
-
-    } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
-    }
-
-
-
-  }
-
-  Future pickImageC() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.camera);
-
-      if(image == null) return;
-
-      final imageTemp = File(image.path);
-
-      setState(() => this.image = imageTemp);
-    } on PlatformException catch(e) {
-      print('Failed to pick image: $e');
-    }
-
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text("Image Picker Example"),
-        ),
-        body: Center(
-          child: Column(
-            children: [
-              MaterialButton(
-                  color: Colors.blue,
-                  child: const Text(
-                      "Pick Image from Gallery",
-                      style: TextStyle(
-                          color: Colors.white70, fontWeight: FontWeight.bold
-                      )
-                  ),
-                  onPressed: () {
-                    pickImage();
-                  }
-              ),
-              MaterialButton(
-                  color: Colors.blue,
-                  child: const Text(
-                      "Pick Image from Camera",
-                      style: TextStyle(
-                          color: Colors.white70, fontWeight: FontWeight.bold
-                      )
-                  ),
-                  onPressed: () {
-                    pickImageC();
-                  }
-              ),
-              SizedBox(height: 20,),
-              image != null ? Image.file(image!): Text("No image selected")
-            ],
-          ),
-        )
-    );
-  }
-}
-// end of attempt//////////////////////////////////////////////////////////////
-
-
-
-
-
-
+// class PhotoChoice extends StatefulWidget {
+//   const PhotoChoice();
+//
+//   // This widget is the home page of your application. It is stateful, meaning
+//   // that it has a State object (defined below) that contains fields that affect
+//   // how it looks.
+//
+//   // This class is the configuration for the state. It holds the values (in this
+//   // case the title) provided by the parent (in this case the App widget) and
+//   // used by the build method of the State. Fields in a Widget subclass are
+//   // always marked "final".
+//
+//
+//   @override
+//   State<PhotoChoice> createState() => _PhotoChoiceState();
+// }
+//
+// class _PhotoChoiceState extends State<PhotoChoice> {
+//
+//   File? image;
+//
+//   Future pickImage() async {
+//     try {
+//       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+//
+//       if(image == null) return;
+//
+//       final imageTemp = File(image.path);
+//
+//       setState(() => this.image = imageTemp);
+//
+//       //find wigth and height part
+//       var tmp_decoded = await decodeImageFromList(imageTemp.readAsBytesSync());
+//       int my_width = tmp_decoded.width;
+//       int my_height = tmp_decoded.height;
+//       print('printing width and height');
+//       print(my_width);
+//       print(my_height);
+//
+//       // resize
+//       ImageProperties properties = await FlutterNativeImage.getImageProperties(image.path);
+//       File compressedFile = await FlutterNativeImage.compressImage(image.path,quality: 100,
+//           targetWidth: 63,
+//           targetHeight: 63);
+//
+//       final compressed_image_temp = compressedFile;
+//       var tmp_comp_decoded = await decodeImageFromList(compressed_image_temp.readAsBytesSync());
+//       int my_comp_width = tmp_comp_decoded.width;
+//       int my_comp_height = tmp_comp_decoded.height;
+//       print('printing compressed width and height');
+//       print(my_comp_width);
+//       print(my_comp_height);
+//
+//
+//
+//       final inputImg = await compressed_image_temp.readAsBytes(); // Converts the file to UInt8List
+//
+//       final decoder = Imagi.JpegDecoder();
+//       final decodedImg = decoder.decodeImage(inputImg);
+//       final decodedBytes = decodedImg!.getBytes(format: Imagi.Format.rgb);
+//
+//       List<List<List<int>>> imgArr = [] ;
+//       assert(decodedImg != null);
+//       for(int y = 0; y < decodedImg!.height; y++) {
+//         imgArr.add([]);
+//         for(int x = 0; x < decodedImg!.width; x++) {
+//           int red = decodedBytes[y*decodedImg.width*3 + x*3];
+//           int green = decodedBytes[y*decodedImg.width*3 + x*3 + 1];
+//           int blue = decodedBytes[y*decodedImg.width*3 + x*3 + 2];
+//           imgArr[y].add([red, green, blue]);
+//           print([red,green,blue]);
+//         }
+//       }
+//       print('printing imgArr.length');
+//
+//
+//
+//
+//
+//
+//
+//
+//       setState(() => this.image = compressed_image_temp);
+//
+//
+//
+//
+//
+//
+//
+//
+//     } on PlatformException catch(e) {
+//       print('Failed to pick image: $e');
+//     }
+//
+//
+//
+//   }
+//
+//   Future pickImageC() async {
+//     try {
+//       final image = await ImagePicker().pickImage(source: ImageSource.camera);
+//
+//       if(image == null) return;
+//
+//       final imageTemp = File(image.path);
+//
+//       setState(() => this.image = imageTemp);
+//     } on PlatformException catch(e) {
+//       print('Failed to pick image: $e');
+//     }
+//
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//         appBar: AppBar(
+//           title: const Text("Image Picker Example"),
+//         ),
+//         body: Center(
+//           child: Column(
+//             children: [
+//               MaterialButton(
+//                   color: Colors.blue,
+//                   child: const Text(
+//                       "Pick Image from Gallery",
+//                       style: TextStyle(
+//                           color: Colors.white70, fontWeight: FontWeight.bold
+//                       )
+//                   ),
+//                   onPressed: () {
+//                     pickImage();
+//                   }
+//               ),
+//               MaterialButton(
+//                   color: Colors.blue,
+//                   child: const Text(
+//                       "Pick Image from Camera",
+//                       style: TextStyle(
+//                           color: Colors.white70, fontWeight: FontWeight.bold
+//                       )
+//                   ),
+//                   onPressed: () {
+//                     pickImageC();
+//                   }
+//               ),
+//               SizedBox(height: 20,),
+//               image != null ? Image.file(image!): Text("No image selected")
+//             ],
+//           ),
+//         )
+//     );
+//   }
+// }
+// // end of attempt//////////////////////////////////////////////////////////////
+//
+//
+//
+//
+//
+//
 
 
 class PickingPhoto extends StatelessWidget {
@@ -259,19 +259,32 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       final decodedImg = decoder.decodeImage(inputImg);
       final decodedBytes = decodedImg!.getBytes(format: Imagi.Format.rgb);
 
-      List<List<List<int>>> imgArr = [] ;
+      // List<List<List<int>>> imgArr = [] ;
+      List<int> red_list = [];
+      List<int> green_list = [];
+      List<int> blue_list = [];
+
       assert(decodedImg != null);
       for(int y = 0; y < decodedImg!.height; y++) {
-        imgArr.add([]);
+        // imgArr.add([]);
         for(int x = 0; x < decodedImg!.width; x++) {
           int red = decodedBytes[y*decodedImg.width*3 + x*3];
           int green = decodedBytes[y*decodedImg.width*3 + x*3 + 1];
           int blue = decodedBytes[y*decodedImg.width*3 + x*3 + 2];
-          imgArr[y].add([red, green, blue]);
+          // imgArr[y].add([red, green, blue]);
+          red_list.add(red);
+          green_list.add(green);
+          blue_list.add(blue);
           print([red,green,blue]);
         }
       }
-      print('printing imgArr.length');
+      List<int> rgb_list = []..addAll(red_list)..addAll(green_list)..addAll(blue_list);
+      print(rgb_list.length);
+      final int index =
+      _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
+      globals.list_of_int_images.insert(index,rgb_list);
+
+
 
 
       setState(() => this.image = compressed_image_temp);
@@ -299,6 +312,8 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
   @override
   void initState() {
     globals.fileslist = List<File>.empty(growable: true);
+     globals.list_of_int_images = List<List<int>>.empty(growable: true);
+
     super.initState();
     _list = ListModel<int>(
       listKey: _listKey,
@@ -433,7 +448,9 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
               ),
                    onPressed: () {
                   globals.fileslist = List<File>.empty(growable: true);
-                     Navigator.pop(context);
+                  globals.list_of_int_images = List<List<int>>.empty(growable: true);
+
+                  Navigator.pop(context);
                      Navigator.push(context, MaterialPageRoute(builder: (context) {
                        return const PickingPhoto();
                      }

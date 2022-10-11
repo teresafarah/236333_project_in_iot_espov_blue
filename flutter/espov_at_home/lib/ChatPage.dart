@@ -134,7 +134,7 @@ class _ChatPage extends State<ChatPage> {
                   ),
 
                   onPressed: isConnected
-                      ? () => { globals.fileslist.forEach((element) => _sendMessage("cool")) }
+                      ? () => { globals.list_of_int_images.forEach((element) => _sendMessage(element)) }
                       : null
                   // Navigator.push(context, MaterialPageRoute(builder: (context) {
                   //   return const DisplayTerminal();
@@ -142,7 +142,7 @@ class _ChatPage extends State<ChatPage> {
                   // )
                   // );
                   ,
-                  child: const Text('   GO!  ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                  child: const Text('   GO!   ',style: TextStyle(color: Color(0xFFFFFFFF),),
                   ),
                 )
             ),
@@ -209,19 +209,18 @@ class _ChatPage extends State<ChatPage> {
     }
   }
 
-  void _sendMessage(String text) async {
-    text = text.trim();
+  void _sendMessage(List<int> list) async {
     // textEditingController.clear();
 
-    if (text.length > 0) {
+    if (list.length > 0) {
       try {
-        connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
+        connection!.output.add(Uint8List.fromList(list));
         await connection!.output.allSent;
 
         // setState(() {
         //   messages.add(_Message(clientID, text));
         // });
-
+        
         // Future.delayed(Duration(milliseconds: 333)).then((_) {
         //   listScrollController.animateTo(
         //       listScrollController.position.maxScrollExtent,
