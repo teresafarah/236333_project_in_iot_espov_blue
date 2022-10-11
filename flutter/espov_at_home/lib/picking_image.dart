@@ -4,15 +4,18 @@ import 'package:espov_at_home/picking_text.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'dart:io';
 import 'dart:math';
-
+import 'package:espov_at_home/ChatPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:image/image.dart' as Imagi;
 import 'dart:typed_data'; //Bundled with Dart
+import 'global_vars.dart' as globals;
 
- var fileslist = List<File>.empty(growable: true);
+import 'package:espov_at_home/starting_display.dart';
+
+ // var fileslist = List<File>.empty(growable: true);
 
 
 
@@ -183,8 +186,7 @@ class _PhotoChoiceState extends State<PhotoChoice> {
 
 
 class PickingPhoto extends StatelessWidget {
-  final BluetoothDevice server;
-  const PickingPhoto({required this.server});
+  const PickingPhoto({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -296,6 +298,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
 
   @override
   void initState() {
+    globals.fileslist = List<File>.empty(growable: true);
     super.initState();
     _list = ListModel<int>(
       listKey: _listKey,
@@ -340,7 +343,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
     final int index =
     _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
     _list.insert(index, _nextItem++);
-    fileslist.insert(index,this.image);
+    globals.fileslist.insert(index,this.image);
   }
 
   // Remove the selected item from the list model.
@@ -352,9 +355,11 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       });
     }
 
-    fileslist.removeAt(_list.indexOf(_selectedItem!));
+    globals.fileslist.removeAt(_list.indexOf(_selectedItem!));
 
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -382,8 +387,16 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
                     )
                 ),
                 onPressed: () {
+                  // globals.fileslist = List<File>.empty(growable: true);
+
+                  Navigator.pop(context);
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return  ChatPage(server: globals.global_server);
+                  }
+                  )
+                  );
                 },
-                child: const Text('start',style: TextStyle(color: Color(0xFFFFFFFF),)),
+                child: const Text('done',style: TextStyle(color: Color(0xFFFFFFFF),)),
               ),
             ),
             Spacer(),
@@ -395,15 +408,15 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
               onPressed: pickImage,
               tooltip: 'insert a new item',
             ),
-            Spacer(),
-
-            IconButton(
-              icon: const Icon(Icons.remove_circle),
-              color: Color(0xff79d7dd),
-              iconSize: 45,
-              onPressed: _remove,
-              tooltip: 'remove the selected item',
-            ),
+            // Spacer(),
+            //
+            // IconButton(
+            //   icon: const Icon(Icons.remove_circle),
+            //   color: Color(0xff79d7dd),
+            //   iconSize: 45,
+            //   onPressed: _remove,
+            //   tooltip: 'remove the selected item',
+            // ),
             Spacer(),
             Container(
               height: 50,
@@ -418,8 +431,15 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
                       )
                   )
               ),
-              onPressed: () {
-              },
+                   onPressed: () {
+                  globals.fileslist = List<File>.empty(growable: true);
+                     Navigator.pop(context);
+                     Navigator.push(context, MaterialPageRoute(builder: (context) {
+                       return const PickingPhoto();
+                     }
+                     )
+                     );
+                   },
               child: const Text('reset',style: TextStyle(color: Color(0xFFFFFFFF),)),
             ),
             ),
@@ -567,16 +587,16 @@ class CardItem extends StatelessWidget {
 
     // final int my_index = _list.indexWhere(((obj) => obj == item));
 
-    if (selected) {
-
-       deco = BoxDecoration(
-    border: Border.all( //<-- SEE HERE
-    width: 5, color: Color(0xff79d7dd)
-    ),
-    );
-
-      textStyle = textStyle.copyWith(color: Colors.lightGreenAccent[400]);
-    }
+    // if (selected) {
+    //
+    //    deco = BoxDecoration(
+    // border: Border.all( //<-- SEE HERE
+    // width: 5, color: Color(0xff79d7dd)
+    // ),
+    // );
+    //
+    //   textStyle = textStyle.copyWith(color: Colors.lightGreenAccent[400]);
+    // }
     return Padding(
       padding: const EdgeInsets.all(2.0),
       child: SizeTransition(
@@ -586,7 +606,7 @@ class CardItem extends StatelessWidget {
           onTap: onTap,
             child: Container(
               decoration: deco,
-              child: new Image.file(fileslist[item],
+              child: new Image.file(globals.fileslist[item],
                 fit: BoxFit.cover,
               ),
             ),

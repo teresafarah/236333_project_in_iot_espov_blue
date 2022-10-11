@@ -3,6 +3,7 @@ import 'package:espov_at_home/display_terminal.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:espov_at_home/ChatPage.dart';
 import 'package:espov_at_home/SelectBondedDevicePage.dart';
+import 'global_vars.dart' as globals;
 
 class BluetoothConnect extends StatelessWidget {
   const BluetoothConnect({Key? key}) : super(key: key);
@@ -53,10 +54,13 @@ class BluetoothConnect extends StatelessWidget {
 
 
 void _startChat(BuildContext context, BluetoothDevice server) {
+
+
+  globals.global_server = server;
   Navigator.of(context).push(
     MaterialPageRoute(
       builder: (context) {
-        return DisplayTerminal(server: server);
+        return DisplayTerminal();
       },
     ),
   );

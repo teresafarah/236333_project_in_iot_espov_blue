@@ -5,8 +5,7 @@ import 'package:espov_at_home/picking_image.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
 class DisplayTerminal extends StatelessWidget {
-  final BluetoothDevice server;
-  const DisplayTerminal({required this.server});
+  const DisplayTerminal({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +19,7 @@ class DisplayTerminal extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PickingPhoto(server : server);
+                    return PickingPhoto();
                   }));
                 },
                 child: const Text('Choose a Photo'),

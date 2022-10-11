@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
-
+import 'package:espov_at_home/global_vars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-
+import 'global_vars.dart' as globals;
 class ChatPage extends StatefulWidget {
-  final BluetoothDevice server;
+  final BluetoothDevice? server;
 
   const ChatPage({required this.server});
 
@@ -41,7 +41,7 @@ class _ChatPage extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    BluetoothConnection.toAddress(widget.server.address).then((_connection) {
+    BluetoothConnection.toAddress(widget.server?.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
       setState(() {
@@ -109,53 +109,51 @@ class _ChatPage extends State<ChatPage> {
       );
     }).toList();
 
-    final serverName = widget.server.name ?? "Unknown";
+    final serverName = widget.server?.name ?? "Unknown";
     return Scaffold(
-      appBar: AppBar(
-          title: (isConnecting
-              ? Text('Connecting chat to ' + serverName + '...')
-              : isConnected
-                  ? Text('Live chat with ' + serverName)
-                  : Text('Chat log with ' + serverName))),
-      body: SafeArea(
+      // appBar: AppBar(
+      //     title: (isConnecting
+      //         ? Text('Connecting chat to ' + serverName + '...')
+      //         : isConnected
+      //             ? Text('Live chat with ' + serverName)
+      //             : Text('Chat log with ' + serverName))),
+      body: Center(
         child: Column(
           children: <Widget>[
-            Flexible(
-              child: ListView(
-                  padding: const EdgeInsets.all(12.0),
-                  controller: listScrollController,
-                  children: list),
-            ),
-            Row(
-              children: <Widget>[
-                Flexible(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      style: const TextStyle(fontSize: 15.0),
-                      controller: textEditingController,
-                      decoration: InputDecoration.collapsed(
-                        hintText: isConnecting
-                            ? 'Wait until connected...'
-                            : isConnected
-                                ? 'Type your message...'
-                                : 'Chat got disconnected',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                      ),
-                      enabled: isConnected,
-                    ),
+            Spacer(),
+            Container(
+                margin: const EdgeInsets.all(8.0),
+                child:             TextButton(
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          )
+                      )
                   ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: isConnected
-                          ? () => _sendMessage(textEditingController.text)
-                          : null),
-                ),
-              ],
-            )
+
+                  onPressed: isConnected
+                      ? () => { globals.fileslist.forEach((element) => _sendMessage("cool")) }
+                      : null
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  //   return const DisplayTerminal();
+                  // }
+                  // )
+                  // );
+                  ,
+                  child: const Text('   GO!  ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                  ),
+                )
+            ),
+            Spacer(),
+            // Flexible(
+            //   child: ListView(
+            //       padding: const EdgeInsets.all(12.0),
+            //       controller: listScrollController,
+            //       children: list),
+            // ),
+
           ],
         ),
       ),
@@ -213,23 +211,23 @@ class _ChatPage extends State<ChatPage> {
 
   void _sendMessage(String text) async {
     text = text.trim();
-    textEditingController.clear();
+    // textEditingController.clear();
 
     if (text.length > 0) {
       try {
         connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
         await connection!.output.allSent;
 
-        setState(() {
-          messages.add(_Message(clientID, text));
-        });
+        // setState(() {
+        //   messages.add(_Message(clientID, text));
+        // });
 
-        Future.delayed(Duration(milliseconds: 333)).then((_) {
-          listScrollController.animateTo(
-              listScrollController.position.maxScrollExtent,
-              duration: Duration(milliseconds: 333),
-              curve: Curves.easeOut);
-        });
+        // Future.delayed(Duration(milliseconds: 333)).then((_) {
+        //   listScrollController.animateTo(
+        //       listScrollController.position.maxScrollExtent,
+        //       duration: Duration(milliseconds: 333),
+        //       curve: Curves.easeOut);
+        // });
       } catch (e) {
         // Ignore error, but notify state
         setState(() {});
