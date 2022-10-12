@@ -220,7 +220,7 @@ class _ChatPage extends State<ChatPage> {
         // setState(() {
         //   messages.add(_Message(clientID, text));
         // });
-        
+
         // Future.delayed(Duration(milliseconds: 333)).then((_) {
         //   listScrollController.animateTo(
         //       listScrollController.position.maxScrollExtent,

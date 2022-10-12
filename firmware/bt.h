@@ -59,3 +59,14 @@ void begin_serial_bt_connection() {
   Serial.println("Bluetooth Started! Ready to pair...");
 #endif
 }
+
+bool is_bt_data_available() {
+  return SerialBT.available() ;
+}
+
+void read_bt_data_to_vector(vector<uint8_t>& bytes) {
+  while (SerialBT.available()) {
+    uint8_t b = SerialBT.read();
+    bytes.push_back(b);
+  }
+}

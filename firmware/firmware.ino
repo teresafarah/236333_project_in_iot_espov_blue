@@ -22,8 +22,9 @@ using namespace std;
 const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
 const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       63;
 const int PIN_NUMBER_OF_HALL_SENSOR =           4;
+const int IMAGE_SIZE_IN_BYTES = (NUMBER_OF_LEDS_IN_LED_STRIP_1 * NUMBER_OF_LEDS_IN_LED_STRIP_1 * 3);
 
-#define PRINT_TIME_OF_LED_UPDATE                               1
+#define PRINT_TIME_OF_LED_UPDATE                               0
 
 /// ********************************************************************************************************************
 /// global objects
@@ -32,6 +33,7 @@ const int PIN_NUMBER_OF_HALL_SENSOR =           4;
 WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
 Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
+vector<uint8_t> image_in_progress_on_bt;
 
 /// ********************************************************************************************************************
 /// SETUP
@@ -41,6 +43,7 @@ void setup() {
 	Serial.begin(115200);
   current_image.update_image_for_testing();
   begin_serial_bt_connection();
+//  image_in_progress_on_bt(IMAGE_SIZE_IN_BYTES);
 }
 
 /// ********************************************************************************************************************
@@ -58,6 +61,19 @@ void loop() {
     unsigned long checkpoint_2 = micros();
     led_strip_1.update_LED_fast(v);
     unsigned long checkpoint_3 = micros();
+
+    // check if new image is received.
+    if (is_bt_data_available()){
+      read_bt_data_to_vector(image_in_progress_on_bt);
+//      Serial.print("image_in_progress_on_bt size = ");
+//      Serial.println(image_in_progress_on_bt.size());
+      if (image_in_progress_on_bt.size() >= IMAGE_SIZE_IN_BYTES) {
+//        assert(image_in_progress_on_bt.size() == IMAGE_SIZE_IN_BYTES);
+        Serial.println("Updating image.");
+        current_image.update_image_as_a_vector_of_bytes(image_in_progress_on_bt);
+        image_in_progress_on_bt = vector<byte>();
+      }
+    }
 #if PRINT_TIME_OF_LED_UPDATE
     if (loop_number % 10000 == 0){
       print_to_bt("Theta calculation time = ");

@@ -60,7 +60,7 @@ public:
     fill_angle_to_strip_vector(red, green, blue);
   }
 
-  void update_image_for_testing() {
+  vector<vector<uint8_t>> get_zeros_image() {
     vector<vector<uint8_t>> zeros(diameter_in_pixels);
     for (int i = 0; i < diameter_in_pixels; ++i){
       zeros.at(i) = vector<uint8_t>(diameter_in_pixels);
@@ -68,7 +68,11 @@ public:
         zeros.at(i).at(j) = 0;
       }
     }
+    return zeros;
+  }
 
+  void update_image_for_testing() {
+    vector<vector<uint8_t>> zeros = get_zeros_image();
     vector<vector<uint8_t>> red = zeros;
     vector<vector<uint8_t>> green = zeros;
     vector<vector<uint8_t>> blue = zeros;
@@ -87,6 +91,31 @@ public:
       }
     }
     
+    update_image(red, green, blue);
+  }
+
+  void update_image_as_a_vector_of_bytes(const vector<byte>& img) {
+    assert(img.size() == diameter_in_pixels * diameter_in_pixels * 3);
+    vector<vector<uint8_t>> zeros = get_zeros_image();
+    vector<vector<uint8_t>> red = zeros;
+    vector<vector<uint8_t>> green = zeros;
+    vector<vector<uint8_t>> blue = zeros;
+
+    int index = 0;
+    for (int color = 0; color < 3; color++){
+      for (int i = 0; i < diameter_in_pixels; ++i){
+        for (int j = 0; j < diameter_in_pixels; ++j){
+          if (color == 0){
+            red.at(i).at(j) = img.at(index);
+          } else if (color == 1) {
+            green.at(i).at(j) = img.at(index);
+          } else {
+            blue.at(i).at(j) = img.at(index);
+          }
+          index ++;
+        }
+      }
+    }
     update_image(red, green, blue);
   }
 
