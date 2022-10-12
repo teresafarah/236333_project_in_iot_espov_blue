@@ -85,29 +85,29 @@ class _ChatPage extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Row> list = messages.map((_message) {
-      return Row(
-        children: <Widget>[
-          Container(
-            child: Text(
-                (text) {
-                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
-                }(_message.text.trim()),
-                style: TextStyle(color: Colors.white)),
-            padding: EdgeInsets.all(12.0),
-            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-            width: 222.0,
-            decoration: BoxDecoration(
-                color:
-                    _message.whom == clientID ? Colors.blueAccent : Colors.grey,
-                borderRadius: BorderRadius.circular(7.0)),
-          ),
-        ],
-        mainAxisAlignment: _message.whom == clientID
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-      );
-    }).toList();
+    // final List<Row> list = messages.map((_message) {
+    //   return Row(
+    //     children: <Widget>[
+    //       Container(
+    //         child: Text(
+    //             (text) {
+    //               return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
+    //             }(_message.text.trim()),
+    //             style: TextStyle(color: Colors.white)),
+    //         padding: EdgeInsets.all(12.0),
+    //         margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+    //         width: 222.0,
+    //         decoration: BoxDecoration(
+    //             color:
+    //                 _message.whom == clientID ? Colors.blueAccent : Colors.grey,
+    //             borderRadius: BorderRadius.circular(7.0)),
+    //       ),
+    //     ],
+    //     mainAxisAlignment: _message.whom == clientID
+    //         ? MainAxisAlignment.end
+    //         : MainAxisAlignment.start,
+    //   );
+    // }).toList();
 
     final serverName = widget.server?.name ?? "Unknown";
     return Scaffold(
@@ -132,15 +132,10 @@ class _ChatPage extends State<ChatPage> {
                           )
                       )
                   ),
-
-                  onPressed: isConnected
-                      ? () => { globals.list_of_int_images.forEach((element) => _sendMessage(element)) }
-                      : null
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) {
-                  //   return const DisplayTerminal();
-                  // }
-                  // )
-                  // );
+                    onPressed: _send_when_connected
+                  // onPressed: isConnected
+                  //     ? () => { globals.list_of_int_images.forEach((element) => _sendMessage(element)) }
+                  //     : null
                   ,
                   child: const Text('   GO!   ',style: TextStyle(color: Color(0xFFFFFFFF),),
                   ),
@@ -232,5 +227,10 @@ class _ChatPage extends State<ChatPage> {
         setState(() {});
       }
     }
+  }
+
+  void _send_when_connected(){
+    while(isConnected != true) {}
+      globals.list_of_int_images.forEach((element) => _sendMessage(element));
   }
 }

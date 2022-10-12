@@ -56,7 +56,7 @@ class DisplayTerminal extends StatelessWidget {
                   );
                 }
                 ,
-                child: const Text('   Choose a text   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                child: const Text('   Create text image   ',style: TextStyle(color: Color(0xFFFFFFFF),),
                 ),
               ),
 

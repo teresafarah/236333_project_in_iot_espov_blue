@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
+import 'package:flutter/material.dart';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
 
-
+import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:screenshot/screenshot.dart';
 class PickingText extends StatelessWidget {
   const PickingText({Key? key}) : super(key: key);
   @override
@@ -54,7 +73,7 @@ class MyCustomForm extends StatelessWidget {
 
 
 
-////
+//
 
 
 
@@ -68,7 +87,11 @@ class MyHomePage extends StatefulWidget {
 
 
 class _MyHomePageState extends State<MyHomePage> {
+  GlobalKey _globalKey = GlobalKey();
   TextEditingController? _textEditingControllerFive;
+  ScreenshotController screenshotController = ScreenshotController();
+  static GlobalKey previewContainer = new GlobalKey();
+
 
   @override
   Widget build(BuildContext context) {
@@ -91,25 +114,31 @@ class _MyHomePageState extends State<MyHomePage> {
                     minWidth: 300
                   ),
                   decoration: BoxDecoration(
+                    color: Colors.black,
                     border: Border.all(width: 4, color: Color(0xff79d7dd)),
                       borderRadius: BorderRadius.all(Radius.circular(20))
 
                   ),
-
-                  child: AutoSizeTextField(
-                    controller: _textEditingControllerFive,
-                    fullwidth: false,
-                    minFontSize: 0,
-                    maxLines: null,
-                    style: TextStyle(fontSize: 50),
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: const EdgeInsets.all(20)
+                  child:
+                  Screenshot(
+                    controller: screenshotController,
+                    child: AutoSizeTextField(
+                      cursorColor: Colors.transparent,
+                      controller: _textEditingControllerFive,
+                      fullwidth: false,
+                      minFontSize: 0,
+                      maxLines: null,
+                      style: TextStyle(fontSize: 50,color: Color(0xff79d7dd)),
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: const EdgeInsets.all(20)
+                      ),
+                      keyboardType: TextInputType.multiline,
                     ),
-                    keyboardType: TextInputType.multiline,
                   ),
+
                 ),
               ),
               TextButton(
@@ -126,6 +155,28 @@ class _MyHomePageState extends State<MyHomePage> {
                   _textEditingControllerFive?.clear();
                 },
                 child: const Text('   clear   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                ),
+              ),
+              TextButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        )
+                    )
+                ),
+
+                  onPressed: () {
+                    screenshotController
+                        .capture(delay: Duration(milliseconds: 10))
+                        .then((capturedImage) async {
+                      ShowCapturedWidget(context, capturedImage!);
+                    }).catchError((onError) {
+                      print(onError);
+                    });
+                    },
+                child: const Text('   display   ',style: TextStyle(color: Color(0xFFFFFFFF),),
                 ),
               ),
               // TextButton(
@@ -151,4 +202,179 @@ class _MyHomePageState extends State<MyHomePage> {
     _textEditingControllerFive?.dispose();
     super.dispose();
   }
+
+  _saveScreen() async {
+    RenderRepaintBoundary boundary =
+    _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+    ui.Image image = await boundary.toImage();
+    ByteData? byteData = await (image.toByteData(format: ui.ImageByteFormat.png));
+    if (byteData != null) {
+      final result =
+      await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+      print(result);
+      _toastInfo(result.toString());
+    }
+  }
+  _toastInfo(String info) {
+    Fluttertoast.showToast(msg: info, toastLength: Toast.LENGTH_LONG);
+  }
+
+  Future<dynamic> ShowCapturedWidget(
+      BuildContext context, Uint8List capturedImage) {
+    return showDialog(
+      useSafeArea: false,
+      context: context,
+      builder: (context) => Scaffold(
+        body: Center(
+          child: Column(
+            children: <Widget>[
+              Spacer(),
+            RepaintBoundary(
+                key: _globalKey,
+                child: capturedImage != null
+              ? Image.memory(capturedImage)
+                : Container()),
+          Spacer(),
+          TextButton(onPressed: _saveScreen, child: Text('save')),
+              Spacer(),
+
+            ],
+              ),
+
+      ),
+      )
+    );
+
+
+  }
+
+
 }
+
+
+
+//
+// import 'dart:typed_data';
+// import 'dart:io';
+// import 'package:flutter/material.dart';
+// import 'package:screenshot/screenshot.dart';
+// // import 'package:webview_flutter/webview_flutter.dart';
+// // import 'package:image_gallery_saver/image_gallery_saver.dart';
+//
+//
+//
+// class MyHomePage extends StatefulWidget {
+//   MyHomePage({Key? key, required this.title}) : super(key: key);
+//   final String title;
+//
+//   @override
+//   _MyHomePageState createState() => _MyHomePageState();
+// }
+//
+// class _MyHomePageState extends State<MyHomePage> {
+//   //Create an instance of ScreenshotController
+//   ScreenshotController screenshotController = ScreenshotController();
+//
+//   @override
+//   void initState() {
+//     // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+//     super.initState();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     // This method is rerun every time setState is called, for instance as done
+//     // by the _incrementCounter method above.
+//     //
+//     // The Flutter framework has been optimized to make rerunning build methods
+//     // fast, so that you can just rebuild anything that needs updating rather
+//     // than having to individually change instances of widgets.
+//     return Scaffold(
+//       appBar: AppBar(
+//         // Here we take the value from the MyHomePage object that was created by
+//         // the App.build method, and use it to set our appbar title.
+//         title: Text(widget.title),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: [
+//             Screenshot(
+//               controller: screenshotController,
+//               child: Container(
+//                   padding: const EdgeInsets.all(30.0),
+//                   decoration: BoxDecoration(
+//                     border: Border.all(color: Colors.blueAccent, width: 5.0),
+//                     color: Colors.amberAccent,
+//                   ),
+//                   child: Text("This widget will be captured as an image")),
+//             ),
+//             SizedBox(
+//               height: 25,
+//             ),
+//             ElevatedButton(
+//               child: Text(
+//                 'Capture Above Widget',
+//               ),
+//               onPressed: () {
+//                 screenshotController
+//                     .capture(delay: Duration(milliseconds: 10))
+//                     .then((capturedImage) async {
+//                   ShowCapturedWidget(context, capturedImage!);
+//                 }).catchError((onError) {
+//                   print(onError);
+//                 });
+//               },
+//             ),
+//             ElevatedButton(
+//               child: Text(
+//                 'Capture An Invisible Widget',
+//               ),
+//               onPressed: () {
+//                 var container = Container(
+//                     padding: const EdgeInsets.all(30.0),
+//                     decoration: BoxDecoration(
+//                       border: Border.all(color: Colors.blueAccent, width: 5.0),
+//                       color: Colors.redAccent,
+//                     ),
+//                     child: Text(
+//                       "This is an invisible widget",
+//                       style: Theme.of(context).textTheme.headline6,
+//                     ));
+//                 screenshotController
+//                     .captureFromWidget(
+//                     InheritedTheme.captureAll(
+//                         context, Material(child: container)),
+//                     delay: Duration(seconds: 1))
+//                     .then((capturedImage) {
+//                   ShowCapturedWidget(context, capturedImage);
+//                 });
+//               },
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Future<dynamic> ShowCapturedWidget(
+//       BuildContext context, Uint8List capturedImage) {
+//     return showDialog(
+//       useSafeArea: false,
+//       context: context,
+//       builder: (context) => Scaffold(
+//         appBar: AppBar(
+//           title: Text("Captured widget screenshot"),
+//         ),
+//         body: Center(
+//             child: capturedImage != null
+//                 ? Image.memory(capturedImage)
+//                 : Container()),
+//       ),
+//     );
+//
+//
+//   }
+//
+//
+// }

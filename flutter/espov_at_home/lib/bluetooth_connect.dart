@@ -106,6 +106,15 @@ class BluetoothConnect extends StatelessWidget {
 
 void _startChat(BuildContext context, BluetoothDevice server) {
 
+  // BluetoothConnection? connection;
+  //
+  // bool isConnecting = true;
+  // bool  isConnected = (connection?.isConnected == true) ? true : false;
+  //
+  // bool isDisconnecting = false;
+  // BluetoothConnection.toAddress(server?.address);
+
+
 
   globals.global_server = server;
   Navigator.of(context).push(
