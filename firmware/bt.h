@@ -8,16 +8,10 @@
 /// includes
 /// ********************************************************************************************************************
 
-#define BLUETOOTH_ON 1
-
-#if BLUETOOTH_ON
-
 #include "BluetoothSerial.h"
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
-#endif
-
 #endif
 
 /// ********************************************************************************************************************
@@ -39,42 +33,30 @@ using namespace std;
 /// global bt
 /// ********************************************************************************************************************
 
-#if BLUETOOTH_ON
 BluetoothSerial SerialBT;
-#endif
 
 /// ********************************************************************************************************************
 /// functions
 /// ********************************************************************************************************************
 
-void begin_serial_bt_connection() {
-#if BLUETOOTH_ON
-  if (!SerialBT.begin("MATESP32Bluetooth")) {
+void bluetooth_begin() {
+  bool success = SerialBT.begin("ESP32test");
+  if (!success) {
     Serial.println("An error occurred initializing Bluetooth");
     ESP.restart();
   } else {
     Serial.println("Bluetooth Initialized");
   }
-#endif
 }
 
-void print_to_bt(const String& string1) {
-  // #if BLUETOOTH_ON
-  //   // for (int i = 0; i < string1.length(); ++i) {
-  //   //   SerialBT.write(string1.charAt(i));
-  //   // }
-  // #else
-  Serial.print(string1);
-  // #endif
-}
-
-bool is_bt_data_available() {
+int bluetooth_available(void) {
   return SerialBT.available();
 }
 
-uint8_t read_bt_byte() {
-  assert(is_bt_data_available());
-  int result = SerialBT.read();
-  assert(0 <= result && result <= 255);
-  return (uint8_t)result;
+int bluetooth_read(void) {
+  return SerialBT.read();
+}
+
+void bluetooth_print(const String& string1) {
+  Serial.print(string1);
 }

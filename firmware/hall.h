@@ -74,11 +74,11 @@ public:
     if (micros() % 100 == 0) {
       int analog_hall_reading = analogRead(pin_number);  //Read the sensor
       int digital_hall_reading = digitalRead(pin_number);
-      print_to_bt("analog_hall_reading = ");
-      print_to_bt(String(analog_hall_reading));
-      print_to_bt("\t\t digital_hall_reading = ");
-      print_to_bt(String(digital_hall_reading));
-      print_to_bt("\n");
+      bluetooth_print("analog_hall_reading = ");
+      bluetooth_print(String(analog_hall_reading));
+      bluetooth_print("\t\t digital_hall_reading = ");
+      bluetooth_print(String(digital_hall_reading));
+      bluetooth_print("\n");
     }
 #endif
   }
@@ -87,22 +87,22 @@ public:
 
   void printHallLastPeriod() {
 #if PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT
-    print_to_bt("last_period = ");
-    print_to_bt(String(last_period));
-    print_to_bt(", moving_average = ");
-    print_to_bt(String(moving_average));
-    print_to_bt("\n");
+    bluetooth_print("last_period = ");
+    bluetooth_print(String(last_period));
+    bluetooth_print(", moving_average = ");
+    bluetooth_print(String(moving_average));
+    bluetooth_print("\n");
 #endif
   }
 
   void printHallStats() {
-    print_to_bt("moving_average = ");
-    print_to_bt(String(moving_average));
-    print_to_bt(", max_period = ");
-    print_to_bt(String(max_period));
-    print_to_bt(", min_period = ");
-    print_to_bt(String(min_period));
-    print_to_bt("\n");
+    bluetooth_print("moving_average = ");
+    bluetooth_print(String(moving_average));
+    bluetooth_print(", max_period = ");
+    bluetooth_print(String(max_period));
+    bluetooth_print(", min_period = ");
+    bluetooth_print(String(min_period));
+    bluetooth_print("\n");
     min_period = last_period;
     max_period = last_period;
   }

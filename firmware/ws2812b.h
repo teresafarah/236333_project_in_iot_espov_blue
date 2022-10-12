@@ -107,9 +107,9 @@ public:
   void perform_LED_brightness_test() {
     while (true) {
       for (uint8_t brightness = 0; brightness <= 255; brightness++) {
-        print_to_bt("brightness = ");
-        print_to_bt(String(brightness));
-        print_to_bt("\n");
+        // bluetooth_print("brightness = ");
+        // bluetooth_print(String(brightness));
+        // bluetooth_print("\n");
         vector<vector<uint8_t>> colors;
         for (int i = 0; i < number_of_leds; i++) {
           vector<uint8_t> random_rgb = { brightness, brightness, brightness };

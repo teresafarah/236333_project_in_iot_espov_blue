@@ -30,9 +30,9 @@ const int IMAGE_SIZE_IN_BYTES = (NUMBER_OF_LEDS_IN_LED_STRIP_1 * NUMBER_OF_LEDS_
 /// global objects
 /// ********************************************************************************************************************
 
-WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
-Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
-Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
+// WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
+// Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
+// Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 
 /// ********************************************************************************************************************
 /// SETUP
@@ -40,8 +40,8 @@ Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 
 void setup() {
   Serial.begin(115200);
-  current_image.update_image_for_testing();
-  begin_serial_bt_connection();
+  bluetooth_begin();
+  // current_image.update_image_for_testing();
 }
 
 /// ********************************************************************************************************************
@@ -53,33 +53,37 @@ void loop() {
   while (true) {
     loop_number++;
     unsigned long checkpoint_0 = micros();
-    int theta = hall_sensor.get_angle();
+    // int theta = hall_sensor.get_angle();
     unsigned long checkpoint_1 = micros();
-    vector<uint32_t>& v = current_image.get_led_strip_colors(theta);
+    // vector<uint32_t>& v = current_image.get_led_strip_colors(theta);
     unsigned long checkpoint_2 = micros();
-    led_strip_1.update_LED_fast(v);
+    // led_strip_1.update_LED_fast(v);
     unsigned long checkpoint_3 = micros();
 
     // check if new image is being received.
-    if (is_bt_data_available()) {
+    if (bluetooth_available()) {
       Serial.println("Some more bytes are available.");
-      while (is_bt_data_available()) {
-        auto image_bytes = read_bt_byte();
-        current_image.update_image_byte_by_byte(image_bytes);
+      int i = 0;
+      while (bluetooth_available()) {
+        auto image_bytes = bluetooth_read();
+        // current_image.update_image_byte_by_byte((uint8_t)image_bytes);
+        i++;
       }
+      Serial.print("Number of bytes read = ");
+      Serial.println(i);
     }
 
 #if PRINT_TIME_OF_LED_UPDATE
     if (loop_number % 10000 == 0) {
-      print_to_bt("Theta calculation time = ");
-      print_to_bt(String(checkpoint_1 - checkpoint_0));
-      print_to_bt(", LED vector finding time = ");
-      print_to_bt(String(checkpoint_2 - checkpoint_1));
-      print_to_bt(", updating LED time = ");
-      print_to_bt(String(checkpoint_3 - checkpoint_2));
-      print_to_bt(", total image Update time = ");
-      print_to_bt(String(checkpoint_3 - checkpoint_0));
-      print_to_bt("\n");
+      bluetooth_print("Theta calculation time = ");
+      bluetooth_print(String(checkpoint_1 - checkpoint_0));
+      bluetooth_print(", LED vector finding time = ");
+      bluetooth_print(String(checkpoint_2 - checkpoint_1));
+      bluetooth_print(", updating LED time = ");
+      bluetooth_print(String(checkpoint_3 - checkpoint_2));
+      bluetooth_print(", total image Update time = ");
+      bluetooth_print(String(checkpoint_3 - checkpoint_0));
+      bluetooth_print("\n");
       hall_sensor.printHallStats();
     }
 #endif
