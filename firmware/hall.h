@@ -23,8 +23,8 @@ using namespace std;
 /// constants
 /// ********************************************************************************************************************
 
-#define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT                        0
-#define PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE                    0
+#define PRINT_LAST_PERIOD_TIME_AFTER_INTERRUPT 0
+#define PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE 0
 
 const float alpha = 0.02;
 const float beta = 1 - alpha;
@@ -47,9 +47,9 @@ Hall* current_hall = 0;
 /// ********************************************************************************************************************
 
 class Hall {
-  
+
   int pin_number;
-  unsigned long time_of_last_detection_in_microseconds ;
+  unsigned long time_of_last_detection_in_microseconds;
   unsigned long last_period;
   float moving_average;
   bool did_interrupt_just_occur;
@@ -58,10 +58,11 @@ class Hall {
 
 public:
 
-  Hall (int pin_number) : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()), 
-                          last_period(1000000), moving_average(1000000), did_interrupt_just_occur(false),
-                          max_period(1000000), min_period(1000000) {
-    pinMode(pin_number, INPUT); 
+  Hall(int pin_number)
+    : pin_number(pin_number), time_of_last_detection_in_microseconds(micros()),
+      last_period(1000000), moving_average(1000000), did_interrupt_just_occur(false),
+      max_period(1000000), min_period(1000000) {
+    pinMode(pin_number, INPUT);
     assert(current_hall == 0);
     current_hall = this;
     attachInterrupt(digitalPinToInterrupt(pin_number), magnet_detect, RISING);
@@ -71,7 +72,7 @@ public:
   void printHallReading() {
 #if PRINT_HALL_READING_EVERY_TIME_WE_GET_ANGLE
     if (micros() % 100 == 0) {
-      int analog_hall_reading = analogRead(pin_number); //Read the sensor
+      int analog_hall_reading = analogRead(pin_number);  //Read the sensor
       int digital_hall_reading = digitalRead(pin_number);
       print_to_bt("analog_hall_reading = ");
       print_to_bt(String(analog_hall_reading));
@@ -112,7 +113,7 @@ public:
     unsigned long new_time = micros();
     unsigned long potential_last_period = new_time - time_of_last_detection_in_microseconds;
     // protect from multiple interrupts that are very close together
-    if (potential_last_period > 50000) { // no less than 50 ms (cannot handle more than 1200 rpm)
+    if (potential_last_period > 50000) {  // no less than 50 ms (cannot handle more than 1200 rpm)
       last_period = potential_last_period;
       time_of_last_detection_in_microseconds = new_time;
       did_interrupt_just_occur = true;
@@ -121,7 +122,7 @@ public:
 
   int get_angle() {
     printHallReading();
-    if (did_interrupt_just_occur){
+    if (did_interrupt_just_occur) {
       did_interrupt_just_occur = false;
       moving_average = (moving_average * beta) + (last_period * alpha);
       max_period = max(last_period, max_period);
@@ -135,14 +136,13 @@ public:
     int rounded_angle = (int)float_angle;
     return rounded_angle;
   }
-
 };
 
 /// ********************************************************************************************************************
 /// interrupt handler
 /// ********************************************************************************************************************
 
-void magnet_detect(){
+void magnet_detect() {
   assert(current_hall != 0);
   current_hall->magnet_detected_on_pin();
 }

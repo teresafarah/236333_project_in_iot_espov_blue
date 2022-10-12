@@ -19,12 +19,12 @@ using namespace std;
 /// constants
 /// ********************************************************************************************************************
 
-const int PIN_NUMBER_OF_LED_STRIP_1 =           15;
-const int NUMBER_OF_LEDS_IN_LED_STRIP_1 =       63;
-const int PIN_NUMBER_OF_HALL_SENSOR =           4;
+const int PIN_NUMBER_OF_LED_STRIP_1 = 15;
+const int NUMBER_OF_LEDS_IN_LED_STRIP_1 = 63;
+const int PIN_NUMBER_OF_HALL_SENSOR = 4;
 const int IMAGE_SIZE_IN_BYTES = (NUMBER_OF_LEDS_IN_LED_STRIP_1 * NUMBER_OF_LEDS_IN_LED_STRIP_1 * 3);
 
-#define PRINT_TIME_OF_LED_UPDATE                               0
+#define PRINT_TIME_OF_LED_UPDATE 0
 
 /// ********************************************************************************************************************
 /// global objects
@@ -39,7 +39,7 @@ Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 /// ********************************************************************************************************************
 
 void setup() {
-	Serial.begin(115200);
+  Serial.begin(115200);
   current_image.update_image_for_testing();
   begin_serial_bt_connection();
 }
@@ -50,8 +50,8 @@ void setup() {
 
 void loop() {
   int loop_number = 0;
-  while(true) {
-    loop_number ++;
+  while (true) {
+    loop_number++;
     unsigned long checkpoint_0 = micros();
     int theta = hall_sensor.get_angle();
     unsigned long checkpoint_1 = micros();
@@ -60,19 +60,17 @@ void loop() {
     led_strip_1.update_LED_fast(v);
     unsigned long checkpoint_3 = micros();
 
-    // check if new image is received.
-    if (is_bt_data_available()){
-      vector<uint8_t> image_bytes = read_bt_data();
-//      Serial.print("image_bytes size = ");
-//      Serial.println(image_bytes.size());
-//      if (image_bytes.size() >= IMAGE_SIZE_IN_BYTES) {
-//        assert(image_in_progress_on_bt.size() == IMAGE_SIZE_IN_BYTES);
-//        Serial.println("Updating image.");
-//        current_image.update_image_as_a_vector_of_bytes(image_bytes);
-//      }
+    // check if new image is being received.
+    if (is_bt_data_available()) {
+      Serial.println("Some more bytes are available.");
+      while (is_bt_data_available()) {
+        auto image_bytes = read_bt_byte();
+        current_image.update_image_byte_by_byte(image_bytes);
+      }
     }
+
 #if PRINT_TIME_OF_LED_UPDATE
-    if (loop_number % 10000 == 0){
+    if (loop_number % 10000 == 0) {
       print_to_bt("Theta calculation time = ");
       print_to_bt(String(checkpoint_1 - checkpoint_0));
       print_to_bt(", LED vector finding time = ");

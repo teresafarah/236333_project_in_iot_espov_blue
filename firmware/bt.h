@@ -8,7 +8,7 @@
 /// includes
 /// ********************************************************************************************************************
 
-#define BLUETOOTH_ON  1
+#define BLUETOOTH_ON 1
 
 #if BLUETOOTH_ON
 
@@ -43,49 +43,38 @@ using namespace std;
 BluetoothSerial SerialBT;
 #endif
 
-void print_to_bt(const String& string1){
-#if BLUETOOTH_ON
-  for (int i = 0; i < string1.length(); ++i){
-    SerialBT.write(string1.charAt(i));
-  }
-#else
-  Serial.print(string1);
-#endif
-}
+/// ********************************************************************************************************************
+/// functions
+/// ********************************************************************************************************************
 
 void begin_serial_bt_connection() {
 #if BLUETOOTH_ON
-  SerialBT.begin("MATESP32Bluetooth");
-  Serial.println("Bluetooth Started! Ready to pair...");
+  if (!SerialBT.begin("MATESP32Bluetooth")) {
+    Serial.println("An error occurred initializing Bluetooth");
+    ESP.restart();
+  } else {
+    Serial.println("Bluetooth Initialized");
+  }
 #endif
 }
 
-bool is_bt_data_available() {
-  return SerialBT.available() ;
+void print_to_bt(const String& string1) {
+  // #if BLUETOOTH_ON
+  //   // for (int i = 0; i < string1.length(); ++i) {
+  //   //   SerialBT.write(string1.charAt(i));
+  //   // }
+  // #else
+  Serial.print(string1);
+  // #endif
 }
 
-vector<byte> read_bt_data() {
-  const int NUMBER_OF_BYTES = 63 * 63 * 3;
-//  Serial.println("Allocate bytes.");
-//  Serial.flush();
-  vector<byte> bytes(NUMBER_OF_BYTES);
-  Serial.println("Reading start.");
-  Serial.flush();
-  for (int i = 0; i < NUMBER_OF_BYTES ; ++ i){
-//    Serial.println("Reading byte.");
-//    Serial.flush();
-    while(SerialBT.available() == false) {}
-    byte b = SerialBT.read();
-    bytes.push_back(b);
-  }
-  Serial.println("Reading end.");
-  Serial.flush();
+bool is_bt_data_available() {
+  return SerialBT.available();
+}
 
-  Serial.println("bytes length = " + String(bytes.size()));
-  
-  return bytes;
-//  while (SerialBT.available()) {
-//    uint8_t b = SerialBT.read();
-//    bytes.push_back(b);
-//  }
+uint8_t read_bt_byte() {
+  assert(is_bt_data_available());
+  int result = SerialBT.read();
+  assert(0 <= result && result <= 255);
+  return (uint8_t)result;
 }
