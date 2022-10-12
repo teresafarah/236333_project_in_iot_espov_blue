@@ -229,13 +229,37 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             children: <Widget>[
               Spacer(),
-            RepaintBoundary(
+            Container(
+              width: 300,
+              height: 300,
+              decoration: BoxDecoration(
+                color: Colors.black,
+                  border: Border.all(color: Color(0xff79d7dd),width:4),
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+
+              ),
+              // color: Colors.black,
+            child : RepaintBoundary(
                 key: _globalKey,
                 child: capturedImage != null
               ? Image.memory(capturedImage)
                 : Container()),
-          Spacer(),
-          TextButton(onPressed: _saveScreen, child: Text('save')),
+            ),
+              TextButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        )
+                    )
+                ),
+
+                onPressed: _saveScreen,
+                child: const Text('   save   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                ),
+              ),
+
               Spacer(),
 
             ],
