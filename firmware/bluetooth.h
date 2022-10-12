@@ -15,48 +15,43 @@
 #endif
 
 /// ********************************************************************************************************************
-/// using
+/// namespace definition
 /// ********************************************************************************************************************
 
-using namespace std;
+namespace bluetooth {
 
 /// ********************************************************************************************************************
-/// constants
+/// protected variable
 /// ********************************************************************************************************************
 
-/// ********************************************************************************************************************
-/// Foward declarations
-/// ********************************************************************************************************************
-
-
-/// ********************************************************************************************************************
-/// global bt
-/// ********************************************************************************************************************
-
-BluetoothSerial SerialBT;
+namespace {
+BluetoothSerial _SerialBT;
+}
 
 /// ********************************************************************************************************************
 /// functions
 /// ********************************************************************************************************************
 
-void bluetooth_begin() {
-  bool success = SerialBT.begin("ESP32test");
+void begin() {
+  bool success = _SerialBT.begin("ESP32test");
   if (!success) {
-    Serial.println("An error occurred initializing Bluetooth");
+    Serial.println("An error occurred initializing Bluetooth.");
     ESP.restart();
   } else {
-    Serial.println("Bluetooth Initialized");
+    Serial.println("Bluetooth initialized.");
   }
 }
 
-int bluetooth_available(void) {
-  return SerialBT.available();
+int available(void) {
+  return _SerialBT.available();
 }
 
-int bluetooth_read(void) {
-  return SerialBT.read();
+int read(void) {
+  return _SerialBT.read();
 }
 
-void bluetooth_print(const String& string1) {
+void print(const String& string1) {
   Serial.print(string1);
+}
+
 }

@@ -8,196 +8,162 @@
 /// includes
 /// ********************************************************************************************************************
 
-#include <vector>
+#include "matrix.h"
+#include "array.h"
+#include "globals.h"
 #include <cassert>
 #include <iostream>
 #include <cmath>
 
 /// ********************************************************************************************************************
-/// using
+/// namespace definition
 /// ********************************************************************************************************************
 
-using namespace std;
+namespace image {
 
 /// ********************************************************************************************************************
-/// constants
+/// protected variable
 /// ********************************************************************************************************************
 
+namespace {
+Matrix<uint32_t, globals::NUM_OF_ANGLES, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> _angle_to_strip;
 
-/// ********************************************************************************************************************
-/// class for managing an image in memory
-/// ********************************************************************************************************************
+// these are used to update image
+Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> _red;
+Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> _green;
+Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> _blue;
+int _current_byte;
+}
 
-template<class T>
-class Image {
+void begin() {
+  Serial.println("image initialized.");
+  _current_byte = 0;
+  Serial.print("globals::SINGLE_COLOR_SIZE_IN_BYTES = ");
+  Serial.println(globals::SINGLE_COLOR_SIZE_IN_BYTES);
+}
 
-  /// ******************************************************************************************************************
-  /// private variables
-  /// ******************************************************************************************************************
-
-  T& led_strip_1;
-  int diameter_in_pixels;
-  vector<vector<uint32_t>> angle_to_strip;
-
-  // these are used to update image
-  vector<vector<uint8_t>> red;
-  vector<vector<uint8_t>> green;
-  vector<vector<uint8_t>> blue;
-  int current_byte;
-
-public:
-
-  /// ******************************************************************************************************************
-  /// public functions
-  /// ******************************************************************************************************************
-
-  /*
-   * Constructor, creates an object that manages an image in memory.
-   */
-  Image(T& led_strip_1, int number_of_pixels_on_led_strip)
-    : led_strip_1(led_strip_1), diameter_in_pixels(number_of_pixels_on_led_strip), current_byte(0) {
-    assert(0 < diameter_in_pixels);
-    assert(diameter_in_pixels < 100);     // just checking but might be more
-    assert(diameter_in_pixels % 2 == 1);  // extremely messy to calculate when number of pixels is not uneven
-
-    // this is done to reserve the space on the heap.
-    vector<vector<uint8_t>> zeros = get_zeros_image();
-    vector<vector<uint8_t>> red = zeros;
-    vector<vector<uint8_t>> green = zeros;
-    vector<vector<uint8_t>> blue = zeros;
-  }
-
-  void update_image() {
-    Serial.println("Image is starting update...");
-    assert(check_that_image_is_square(red, green, blue));
-    assert(red.size() == diameter_in_pixels);
-    fill_angle_to_strip_vector(red, green, blue);
-    Serial.println("Image update done!");
-  }
-
-  vector<vector<uint8_t>> get_zeros_image() {
-    vector<vector<uint8_t>> zeros(diameter_in_pixels);
-    for (int i = 0; i < diameter_in_pixels; ++i) {
-      zeros.at(i) = vector<uint8_t>(diameter_in_pixels);
-      for (int j = 0; j < diameter_in_pixels; j++) {
-        zeros.at(i).at(j) = 0;
-      }
+Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> get_zeros_image() {
+  Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> zeros;
+  for (int i = 0; i < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1; ++i) {
+    for (int j = 0; j < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1; j++) {
+      zeros.at(i, j) = 0;
     }
-    return zeros;
+  }
+  return zeros;
+}
+
+const Array<uint32_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1>& get_led_strip_colors(int angle_relative_to_x) {
+  return _angle_to_strip.get_row(angle_relative_to_x / globals::DISTANCE_BETWEEN_ANGLES);
+}
+
+Matrix<int, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, 2> get_relavent_positions(int angle_relative_to_x) {
+  // Serial.print("Calling get_relavent_positions with angle_relative_to_x = ");
+  // Serial.println(angle_relative_to_x);
+  double x0 = ((double)globals::NUMBER_OF_LEDS_IN_LED_STRIP_1) / 2;
+  double y0 = x0;
+  double dx = cos(((double)angle_relative_to_x) * PI / 180.0);
+  double dy = sin(((double)angle_relative_to_x) * PI / 180.0);
+  Matrix<int, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, 2> result;
+  int from = -(globals::NUMBER_OF_LEDS_IN_LED_STRIP_1 / 2);
+  int to = (globals::NUMBER_OF_LEDS_IN_LED_STRIP_1 / 2);
+  for (int i = from; i <= to; ++i) {
+    double x_as_real_number = x0 + (dx * i);
+    double y_as_real_number = y0 + (dy * i);
+    /// floor rounds down, ceiling rounds up, and truncate rounds towards zero.
+    int x = (int)floor(x_as_real_number);  // can't be round since sometimes that goes out of bounds
+    int y = (int)floor(y_as_real_number);
+    assert(0 <= x && x < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1);
+    assert(0 <= y && y < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1);
+    result.at(i - from, 0) = x;
+    result.at(i - from, 1) = y;
+  }
+  // Serial.print("Calling get_relavent_positions with angle_relative_to_x = ");
+  // Serial.println(angle_relative_to_x);
+  return result;
+}
+
+Array<uint32_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> calculate_led_strip_colors(int angle_relative_to_x) {
+  // Serial.print("Calling calculate_led_strip_colors with angle_relative_to_x = ");
+  // Serial.println(angle_relative_to_x);
+
+  assert(0 <= angle_relative_to_x && angle_relative_to_x < 360);
+  Matrix<int, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, 2> positions = get_relavent_positions(angle_relative_to_x);
+
+  // vector<vector<uint8_t>> result_as_rgb;
+  Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, 3> result_as_rgb;
+  for (int i = 0; i < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1; ++i) {
+    int x = positions.at(i, 0);
+    int y = positions.at(i, 1);
+    result_as_rgb.at(i, 0) = _red.at(x, y);
+    result_as_rgb.at(i, 1) = _green.at(x, y);
+    result_as_rgb.at(i, 2) = _blue.at(x, y);
   }
 
-  void update_image_for_testing() {
-    vector<vector<uint8_t>> zeros = get_zeros_image();
-    red = zeros;
-    green = zeros;
-    blue = zeros;
+  Array<uint32_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> result = ws2812b::convert_rgb_to_neopixel_rgb(result_as_rgb);
+  return result;
+}
 
-    for (int i = 0; i < diameter_in_pixels; ++i) {
-      for (int j = 0; j < diameter_in_pixels; ++j) {
-        if (i % 5 == 0) {
-          if (i % 3 == 0) {
-            red.at(i).at(j) = 255;
-          } else if (i % 3 == 1) {
-            green.at(i).at(j) = 255;
-          } else {
-            blue.at(i).at(j) = 255;
-          }
+void fill_angle_to_strip_vector() {
+  for (int theta = 0; theta < 360; theta += globals::DISTANCE_BETWEEN_ANGLES) {
+    _angle_to_strip.get_row(theta / globals::DISTANCE_BETWEEN_ANGLES) = calculate_led_strip_colors(theta);
+  }
+}
+
+void update_image() {
+  Serial.println("Image is starting update...");
+  fill_angle_to_strip_vector();
+  Serial.println("Image update done!");
+}
+
+void update_image_for_testing() {
+  Serial.println("calling update_image_for_testing.");
+  auto zeros = get_zeros_image();
+  _red = zeros;
+  _green = zeros;
+  _blue = zeros;
+
+  for (int i = 0; i < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1; ++i) {
+    for (int j = 0; j < globals::NUMBER_OF_LEDS_IN_LED_STRIP_1; ++j) {
+      if (i % 5 == 0) {
+        if (i % 3 == 0) {
+          _red.at(i, j) = 255;
+        } else if (i % 3 == 1) {
+          _green.at(i, j) = 255;
+        } else {
+          _blue.at(i, j) = 255;
         }
       }
     }
+  }
 
+
+  update_image();
+}
+
+void update_image_byte_by_byte(uint8_t byte) {
+  // Serial.print("current_byte = ");
+  // Serial.println(_current_byte);
+  int color = _current_byte / globals::SINGLE_COLOR_SIZE_IN_BYTES;
+  // Serial.print("color = ");
+  // Serial.println(color);
+  assert(color == 0 || color == 1 || color == 2);
+  int i = (_current_byte % globals::SINGLE_COLOR_SIZE_IN_BYTES) / globals::NUMBER_OF_LEDS_IN_LED_STRIP_1;
+  int j = (_current_byte % globals::SINGLE_COLOR_SIZE_IN_BYTES) % globals::NUMBER_OF_LEDS_IN_LED_STRIP_1;
+
+  if (color == 0) {
+    _red.at(i, j) = byte;
+  } else if (color == 1) {
+    _green.at(i, j) = byte;
+  } else {
+    _blue.at(i, j) = byte;
+  }
+
+  _current_byte++;
+
+  if (_current_byte == globals::IMAGE_SIZE_IN_BYTES) {
     update_image();
+    _current_byte = 0;
   }
+}
 
-  void update_image_byte_by_byte(uint8_t byte) {
-    const int image_size = diameter_in_pixels * diameter_in_pixels;
-    int color = current_byte % image_size;
-    assert(color == 0 || color == 1 || color == 2);
-    int i = (current_byte / image_size) / diameter_in_pixels;
-    int j = (current_byte / image_size) % diameter_in_pixels;
-
-    if (color == 0) {
-      red.at(i).at(j) = byte;
-    } else if (color == 1) {
-      green.at(i).at(j) = byte;
-    } else {
-      blue.at(i).at(j) = byte;
-    }
-
-    current_byte++;
-
-    Serial.print("current_byte = ");
-    Serial.print(current_byte);
-    if (current_byte == image_size * 3) {
-      update_image();
-      current_byte = 0;
-    }
-  }
-
-  vector<uint32_t>& get_led_strip_colors(int angle_relative_to_x) {
-    return angle_to_strip.at(angle_relative_to_x);
-  }
-
-private:
-
-  /// ******************************************************************************************************************
-  /// private helper functions
-  /// ******************************************************************************************************************
-
-  bool check_that_image_is_square(const vector<vector<uint8_t>>& n_red, const vector<vector<uint8_t>>& n_green, const vector<vector<uint8_t>>& n_blue) {
-    int potential_height_and_width = n_red.size();
-    assert(n_red.size() == n_green.size());
-    assert(n_red.size() == n_blue.size());
-    for (int i = 0; i < potential_height_and_width; ++i) {
-      assert(n_red.at(i).size() == potential_height_and_width);
-      assert(n_green.at(i).size() == potential_height_and_width);
-      assert(n_blue.at(i).size() == potential_height_and_width);
-    }
-    return true;
-  }
-
-  vector<vector<int>> get_relavent_positions(int angle_relative_to_x) {
-    double x0 = ((double)diameter_in_pixels) / 2;
-    double y0 = x0;
-    double dx = cos(((double)angle_relative_to_x) * PI / 180.0);
-    double dy = sin(((double)angle_relative_to_x) * PI / 180.0);
-    vector<vector<int>> result;
-    int from = -(diameter_in_pixels / 2);
-    int to = (diameter_in_pixels / 2);
-    for (int i = from; i <= to; ++i) {
-      double x_as_real_number = x0 + (dx * i);
-      double y_as_real_number = y0 + (dy * i);
-      /// floor rounds down, ceiling rounds up, and truncate rounds towards zero.
-      int x = (int)floor(x_as_real_number);  // can't be round since sometimes that goes out of bounds
-      int y = (int)floor(y_as_real_number);
-      assert(0 <= x && x < diameter_in_pixels);
-      assert(0 <= y && y < diameter_in_pixels);
-      result.push_back({ x, y });
-    }
-    assert(result.size() == diameter_in_pixels);
-    return result;
-  }
-
-  vector<uint32_t> calculate_led_strip_colors(int angle_relative_to_x, const vector<vector<uint8_t>>& red, const vector<vector<uint8_t>>& green, const vector<vector<uint8_t>>& blue) {
-    assert(0 <= angle_relative_to_x && angle_relative_to_x < 360);
-    vector<vector<int>> positions = get_relavent_positions(angle_relative_to_x);
-
-    vector<vector<uint8_t>> result_as_rgb;
-    for (vector<int>& pos : positions) {
-      assert(pos.size() == 2);
-      int x = pos.at(0);
-      int y = pos.at(1);
-      result_as_rgb.push_back({ red.at(x).at(y), green.at(x).at(y), blue.at(x).at(y) });
-    }
-
-    vector<uint32_t> result = led_strip_1.convert_rgb_to_neopixel_rgb(result_as_rgb);
-    return result;
-  }
-
-  void fill_angle_to_strip_vector(const vector<vector<uint8_t>>& red, const vector<vector<uint8_t>>& green, const vector<vector<uint8_t>>& blue) {
-    angle_to_strip = vector<vector<uint32_t>>(360);
-    for (int theta = 0; theta < 360; ++theta) {
-      angle_to_strip.at(theta) = calculate_led_strip_colors(theta, red, green, blue);
-    }
-  }
-};
+}
