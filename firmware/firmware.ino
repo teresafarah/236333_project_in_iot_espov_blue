@@ -14,6 +14,12 @@
 #define PRINT_TIME_OF_LED_UPDATE 0
 
 /// ********************************************************************************************************************
+/// simple globals
+/// ********************************************************************************************************************
+
+int loops_since_last_bt_msg;
+
+/// ********************************************************************************************************************
 /// SETUP
 /// ********************************************************************************************************************
 
@@ -24,6 +30,7 @@ void setup() {
   image::begin();
   hall::begin();
   image::update_image_for_testing();
+  loops_since_last_bt_msg = 0;
 }
 
 /// ********************************************************************************************************************
@@ -44,6 +51,7 @@ void loop() {
 
   // check if new image is being received.
   if (bluetooth::available()) {
+    loops_since_last_bt_msg = 0;
     Serial.println("Some more bytes are available.");
     int i = 0;
     while (bluetooth::available()) {
@@ -53,5 +61,11 @@ void loop() {
     }
     Serial.print("Number of bytes read = ");
     Serial.println(i);
+  } else {
+    loops_since_last_bt_msg++;
+  }
+
+  if (loops_since_last_bt_msg >= 10000 && (loops_since_last_bt_msg % 10000 == 0)) {
+    image::clear_pending_image();
   }
 }

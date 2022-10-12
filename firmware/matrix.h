@@ -26,5 +26,4 @@ public:
   const Array<T, M>& get_row(unsigned int index_i) const {
     return mat.at(index_i);
   }
-  
 };

@@ -35,11 +35,16 @@ Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_
 int _current_byte;
 }
 
+void clear_pending_image() {
+  Serial.println("Called clear_pending_image.");
+  _current_byte = 0;
+}
+
 void begin() {
   Serial.println("image initialized.");
-  _current_byte = 0;
-  Serial.print("globals::SINGLE_COLOR_SIZE_IN_BYTES = ");
-  Serial.println(globals::SINGLE_COLOR_SIZE_IN_BYTES);
+  clear_pending_image();
+  // Serial.print("globals::SINGLE_COLOR_SIZE_IN_BYTES = ");
+  // Serial.println(globals::SINGLE_COLOR_SIZE_IN_BYTES);
 }
 
 Matrix<uint8_t, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1, globals::NUMBER_OF_LEDS_IN_LED_STRIP_1> get_zeros_image() {
@@ -141,11 +146,7 @@ void update_image_for_testing() {
 }
 
 void update_image_byte_by_byte(uint8_t byte) {
-  // Serial.print("current_byte = ");
-  // Serial.println(_current_byte);
   int color = _current_byte / globals::SINGLE_COLOR_SIZE_IN_BYTES;
-  // Serial.print("color = ");
-  // Serial.println(color);
   assert(color == 0 || color == 1 || color == 2);
   int i = (_current_byte % globals::SINGLE_COLOR_SIZE_IN_BYTES) / globals::NUMBER_OF_LEDS_IN_LED_STRIP_1;
   int j = (_current_byte % globals::SINGLE_COLOR_SIZE_IN_BYTES) % globals::NUMBER_OF_LEDS_IN_LED_STRIP_1;
@@ -162,7 +163,7 @@ void update_image_byte_by_byte(uint8_t byte) {
 
   if (_current_byte == globals::IMAGE_SIZE_IN_BYTES) {
     update_image();
-    _current_byte = 0;
+    clear_pending_image();
   }
 }
 
