@@ -17,20 +17,47 @@ class DisplayTerminal extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children:  <Widget>[
               TextButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        )
+                    )
+                ),
+
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return PickingPhoto();
-                  }));
-                },
-                child: const Text('Choose a Photo'),
+                    return const PickingPhoto();
+                  }
+                  )
+                  );
+                }
+                ,
+                child: const Text('   Choose Photos   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                ),
               ),
+              SizedBox(height: 40),
               TextButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(18.0),
+                        )
+                    )
+                ),
+
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const PickingText();
-                  }));
-                },
-                child: const Text('Choose a Text'),
+                    return const MyHomePage();
+                  }
+                  )
+                  );
+                }
+                ,
+                child: const Text('   Create text image   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                ),
               ),
 
             ]
