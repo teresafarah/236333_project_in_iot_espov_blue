@@ -95,7 +95,7 @@ public:
   }
 
   void update_image_as_a_vector_of_bytes(const vector<byte>& img) {
-    assert(img.size() == diameter_in_pixels * diameter_in_pixels * 3);
+    assert(img.size() >= diameter_in_pixels * diameter_in_pixels * 3);
     vector<vector<uint8_t>> zeros = get_zeros_image();
     vector<vector<uint8_t>> red = zeros;
     vector<vector<uint8_t>> green = zeros;

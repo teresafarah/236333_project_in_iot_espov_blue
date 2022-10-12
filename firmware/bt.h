@@ -64,9 +64,28 @@ bool is_bt_data_available() {
   return SerialBT.available() ;
 }
 
-void read_bt_data_to_vector(vector<uint8_t>& bytes) {
-  while (SerialBT.available()) {
-    uint8_t b = SerialBT.read();
+vector<byte> read_bt_data() {
+  const int NUMBER_OF_BYTES = 63 * 63 * 3;
+//  Serial.println("Allocate bytes.");
+//  Serial.flush();
+  vector<byte> bytes(NUMBER_OF_BYTES);
+  Serial.println("Reading start.");
+  Serial.flush();
+  for (int i = 0; i < NUMBER_OF_BYTES ; ++ i){
+//    Serial.println("Reading byte.");
+//    Serial.flush();
+    while(SerialBT.available() == false) {}
+    byte b = SerialBT.read();
     bytes.push_back(b);
   }
+  Serial.println("Reading end.");
+  Serial.flush();
+
+  Serial.println("bytes length = " + String(bytes.size()));
+  
+  return bytes;
+//  while (SerialBT.available()) {
+//    uint8_t b = SerialBT.read();
+//    bytes.push_back(b);
+//  }
 }

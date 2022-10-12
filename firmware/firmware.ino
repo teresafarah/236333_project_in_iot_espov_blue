@@ -33,7 +33,6 @@ const int IMAGE_SIZE_IN_BYTES = (NUMBER_OF_LEDS_IN_LED_STRIP_1 * NUMBER_OF_LEDS_
 WS2812B led_strip_1(PIN_NUMBER_OF_LED_STRIP_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
 Hall hall_sensor(PIN_NUMBER_OF_HALL_SENSOR);
 Image<WS2812B> current_image(led_strip_1, NUMBER_OF_LEDS_IN_LED_STRIP_1);
-vector<uint8_t> image_in_progress_on_bt;
 
 /// ********************************************************************************************************************
 /// SETUP
@@ -43,7 +42,6 @@ void setup() {
 	Serial.begin(115200);
   current_image.update_image_for_testing();
   begin_serial_bt_connection();
-//  image_in_progress_on_bt(IMAGE_SIZE_IN_BYTES);
 }
 
 /// ********************************************************************************************************************
@@ -64,15 +62,14 @@ void loop() {
 
     // check if new image is received.
     if (is_bt_data_available()){
-      read_bt_data_to_vector(image_in_progress_on_bt);
-//      Serial.print("image_in_progress_on_bt size = ");
-//      Serial.println(image_in_progress_on_bt.size());
-      if (image_in_progress_on_bt.size() >= IMAGE_SIZE_IN_BYTES) {
+      vector<uint8_t> image_bytes = read_bt_data();
+//      Serial.print("image_bytes size = ");
+//      Serial.println(image_bytes.size());
+//      if (image_bytes.size() >= IMAGE_SIZE_IN_BYTES) {
 //        assert(image_in_progress_on_bt.size() == IMAGE_SIZE_IN_BYTES);
-        Serial.println("Updating image.");
-        current_image.update_image_as_a_vector_of_bytes(image_in_progress_on_bt);
-        image_in_progress_on_bt = vector<byte>();
-      }
+//        Serial.println("Updating image.");
+//        current_image.update_image_as_a_vector_of_bytes(image_bytes);
+//      }
     }
 #if PRINT_TIME_OF_LED_UPDATE
     if (loop_number % 10000 == 0){
