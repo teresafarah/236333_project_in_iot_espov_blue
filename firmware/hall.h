@@ -110,7 +110,8 @@ int get_angle() {
   float percentage_of_circle = ((float)current_delta) / T;
   float float_angle = percentage_of_circle * 360;
   int rounded_angle = (int)float_angle;
-  return rounded_angle;
+  // the fan spins the opposite direction.
+  return 360 - rounded_angle;
 }
 
 }

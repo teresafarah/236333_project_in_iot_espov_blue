@@ -227,7 +227,7 @@ class _ChatPage extends State<ChatPage> {
 
   void _sendMessage(List<int> list) async {
     // textEditingController.clear();
-    const int BytesEachTime = 10;
+    const int BytesEachTime = 100;
     if (list.length > 0) {
       try {
         setState(() {
