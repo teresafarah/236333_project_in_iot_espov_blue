@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi';
+import 'dart:math';
 import 'dart:typed_data';
 import 'package:espov_at_home/global_vars.dart';
 import 'package:flutter/material.dart';
@@ -23,19 +25,18 @@ class _Message {
 }
 
 class _ChatPage extends State<ChatPage> {
-  static final clientID = 0;
+  // static final clientID = 0;
   BluetoothConnection? connection;
 
   List<_Message> messages = List<_Message>.empty(growable: true);
   String _messageBuffer = '';
 
-  final TextEditingController textEditingController =
-      new TextEditingController();
-  final ScrollController listScrollController = new ScrollController();
+  final TextEditingController textEditingController = TextEditingController();
+  final ScrollController listScrollController = ScrollController();
 
   bool isConnecting = true;
   bool get isConnected => (connection?.isConnected ?? false);
-
+  bool isSending = true;
   bool isDisconnecting = false;
 
   @override
@@ -48,6 +49,7 @@ class _ChatPage extends State<ChatPage> {
       setState(() {
         isConnecting = false;
         isDisconnecting = false;
+        isSending = false;
       });
 
       connection!.input!.listen(_onDataReceived).onDone(() {
@@ -110,7 +112,7 @@ class _ChatPage extends State<ChatPage> {
     //   );
     // }).toList();
 
-    final serverName = widget.server?.name ?? "Unknown";
+    // final serverName = widget.server?.name ?? "Unknown";
     return Scaffold(
       // appBar: AppBar(
       //     title: (isConnecting
@@ -121,30 +123,47 @@ class _ChatPage extends State<ChatPage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            Spacer(),
+            const Spacer(),
             Container(
                 margin: const EdgeInsets.all(8.0),
-                child: TextButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      ))),
-                  onPressed: _send_when_connected
-                  // onPressed: isConnected
-                  //     ? () => { globals.list_of_int_images.forEach((element) => _sendMessage(element)) }
-                  //     : null
-                  ,
-                  child: const Text(
-                    '   GO!   ',
-                    style: TextStyle(
-                      color: Color(0xFFFFFFFF),
-                    ),
-                  ),
-                )),
-            Spacer(),
+                child: !isConnected
+                    ? (const Text(
+                        '   Connecting to device...   ',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ))
+                    : (isSending
+                        ? (const Text(
+                            '   Sending image...   ',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ))
+                        : (TextButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    const MaterialStatePropertyAll<Color>(
+                                        Color(0xff79d7dd)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ))),
+                            onPressed: isConnected
+                                ? () => {
+                                      globals.list_of_int_images.forEach(
+                                          (element) => _sendMessage(element))
+                                    }
+                                : null,
+                            child: const Text(
+                              '   Send image!   ',
+                              style: TextStyle(
+                                color: Color(0xFFFFFFFF),
+                              ),
+                            ),
+                          )))),
+            const Spacer(),
             // Flexible(
             //   child: ListView(
             //       padding: const EdgeInsets.all(12.0),
@@ -160,11 +179,11 @@ class _ChatPage extends State<ChatPage> {
   void _onDataReceived(Uint8List data) {
     // Allocate buffer for parsed data
     int backspacesCounter = 0;
-    data.forEach((byte) {
+    for (var byte in data) {
       if (byte == 8 || byte == 127) {
         backspacesCounter++;
       }
-    });
+    }
     Uint8List buffer = Uint8List(data.length - backspacesCounter);
     int bufferIndex = buffer.length;
 
@@ -208,12 +227,24 @@ class _ChatPage extends State<ChatPage> {
 
   void _sendMessage(List<int> list) async {
     // textEditingController.clear();
-
+    const int BytesEachTime = 10;
     if (list.length > 0) {
       try {
-        connection!.output.add(Uint8List.fromList(list));
-        await connection!.output.allSent;
+        setState(() {
+          isSending = true;
+        });
 
+        for (int i = 0; i < list.length; i += BytesEachTime) {
+          connection!.output.add(Uint8List.fromList(
+              list.sublist(i, min(i + BytesEachTime, list.length))));
+          await connection!.output.allSent;
+          await Future.delayed(const Duration(milliseconds: 10));
+        }
+
+        setState(() {
+          isSending = false;
+        });
+        // isSending = false;
         // setState(() {
         //   messages.add(_Message(clientID, text));
         // });
@@ -231,8 +262,8 @@ class _ChatPage extends State<ChatPage> {
     }
   }
 
-  void _send_when_connected() {
-    while (isConnected != true) {}
-    globals.list_of_int_images.forEach((element) => _sendMessage(element));
-  }
+  // void _send_when_connected() {
+  //   while (isConnected != true) {}
+  //   globals.list_of_int_images.forEach((element) => _sendMessage(element));
+  // }
 }

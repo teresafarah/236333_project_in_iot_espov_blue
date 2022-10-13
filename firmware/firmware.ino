@@ -59,13 +59,13 @@ void loop() {
       image::update_image_byte_by_byte((uint8_t)image_bytes);
       i++;
     }
-    Serial.print("Number of bytes read = ");
-    Serial.println(i);
+    // Serial.print("Number of bytes read = ");
+    // Serial.println(i);
   } else {
     loops_since_last_bt_msg++;
   }
 
-  if (loops_since_last_bt_msg >= 10000 && (loops_since_last_bt_msg % 10000 == 0)) {
+  if (loops_since_last_bt_msg == 2000) {
     image::clear_pending_image();
   }
 }
