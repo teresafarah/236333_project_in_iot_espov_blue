@@ -21,32 +21,24 @@ import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
+
 class PickingText extends StatelessWidget {
   const PickingText({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
-            children:  <Widget>[
+            children: <Widget>[
               MyCustomForm(),
-
-            ]
-        ),
-
-
+            ]),
       ),
     );
   }
 }
-
-
-
-
 
 class MyCustomForm extends StatelessWidget {
   const MyCustomForm({Key? key}) : super(key: key);
@@ -65,17 +57,12 @@ class MyCustomForm extends StatelessWidget {
             ),
           ),
         ),
-
       ],
     );
   }
 }
 
-
-
 //
-
-
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -84,14 +71,11 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
   GlobalKey _globalKey = GlobalKey();
   TextEditingController? _textEditingControllerFive;
   ScreenshotController screenshotController = ScreenshotController();
   static GlobalKey previewContainer = new GlobalKey();
-
 
   @override
   Widget build(BuildContext context) {
@@ -107,20 +91,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Container(
                   constraints: BoxConstraints(
-
-                    maxHeight: 300,
-                    maxWidth: 300,
-                    minHeight: 300,
-                    minWidth: 300
-                  ),
+                      maxHeight: 300,
+                      maxWidth: 300,
+                      minHeight: 300,
+                      minWidth: 300),
                   decoration: BoxDecoration(
-                    color: Colors.black,
-                    border: Border.all(width: 4, color: Color(0xff79d7dd)),
-                      borderRadius: BorderRadius.all(Radius.circular(20))
-
-                  ),
-                  child:
-                  Screenshot(
+                      color: Colors.black,
+                      border: Border.all(width: 4, color: Color(0xff79d7dd)),
+                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  child: Screenshot(
                     controller: screenshotController,
                     child: AutoSizeTextField(
                       cursorColor: Colors.transparent,
@@ -128,55 +107,57 @@ class _MyHomePageState extends State<MyHomePage> {
                       fullwidth: false,
                       minFontSize: 0,
                       maxLines: null,
-                      style: TextStyle(fontSize: 50,color: Color(0xff79d7dd)),
+                      style: TextStyle(fontSize: 50, color: Color(0xff79d7dd)),
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
                           border: InputBorder.none,
                           isDense: true,
-                          contentPadding: const EdgeInsets.all(20)
-                      ),
+                          contentPadding: const EdgeInsets.all(20)),
                       keyboardType: TextInputType.multiline,
                     ),
                   ),
-
                 ),
               ),
               TextButton(
                 style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    backgroundColor:
+                        MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )
-                    )
-                ),
-
+                      borderRadius: BorderRadius.circular(18.0),
+                    ))),
                 onPressed: () {
                   _textEditingControllerFive?.clear();
                 },
-                child: const Text('   clear   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                child: const Text(
+                  '   clear   ',
+                  style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                  ),
                 ),
               ),
               TextButton(
                 style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    backgroundColor:
+                        MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )
-                    )
-                ),
-
-                  onPressed: () {
-                    screenshotController
-                        .capture(delay: Duration(milliseconds: 10))
-                        .then((capturedImage) async {
-                      ShowCapturedWidget(context, capturedImage!);
-                    }).catchError((onError) {
-                      print(onError);
-                    });
-                    },
-                child: const Text('   display   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                      borderRadius: BorderRadius.circular(18.0),
+                    ))),
+                onPressed: () {
+                  screenshotController
+                      .capture(delay: Duration(milliseconds: 10))
+                      .then((capturedImage) async {
+                    ShowCapturedWidget(context, capturedImage!);
+                  }).catchError((onError) {
+                    print(onError);
+                  });
+                },
+                child: const Text(
+                  '   display   ',
+                  style: TextStyle(
+                    color: Color(0xFFFFFFFF),
+                  ),
                 ),
               ),
               // TextButton(
@@ -205,16 +186,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _saveScreen() async {
     RenderRepaintBoundary boundary =
-    _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+        _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
     ui.Image image = await boundary.toImage();
-    ByteData? byteData = await (image.toByteData(format: ui.ImageByteFormat.png));
+    ByteData? byteData =
+        await (image.toByteData(format: ui.ImageByteFormat.png));
     if (byteData != null) {
       final result =
-      await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
+          await ImageGallerySaver.saveImage(byteData.buffer.asUint8List());
       print(result);
       _toastInfo(result.toString());
     }
   }
+
   _toastInfo(String info) {
     Fluttertoast.showToast(msg: info, toastLength: Toast.LENGTH_LONG);
   }
@@ -222,57 +205,51 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<dynamic> ShowCapturedWidget(
       BuildContext context, Uint8List capturedImage) {
     return showDialog(
-      useSafeArea: false,
-      context: context,
-      builder: (context) => Scaffold(
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              Spacer(),
-            Container(
-              width: 300,
-              height: 300,
-              decoration: BoxDecoration(
-                color: Colors.black,
-                  border: Border.all(color: Color(0xff79d7dd),width:4),
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-
-              ),
-              // color: Colors.black,
-            child : RepaintBoundary(
-                key: _globalKey,
-                child: capturedImage != null
-              ? Image.memory(capturedImage)
-                : Container()),
-            ),
-              TextButton(
-                style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
-                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                        RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )
-                    )
+        useSafeArea: false,
+        context: context,
+        builder: (context) => Scaffold(
+              body: Center(
+                child: Column(
+                  children: <Widget>[
+                    Spacer(),
+                    Container(
+                      width: 300,
+                      height: 300,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        border: Border.all(color: Color(0xff79d7dd), width: 4),
+                        borderRadius: BorderRadius.all(Radius.circular(20)),
+                      ),
+                      // color: Colors.black,
+                      child: RepaintBoundary(
+                          key: _globalKey,
+                          child: capturedImage != null
+                              ? Image.memory(capturedImage)
+                              : Container()),
+                    ),
+                    TextButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStatePropertyAll<Color>(
+                              Color(0xff79d7dd)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                          ))),
+                      onPressed: _saveScreen,
+                      child: const Text(
+                        '   save   ',
+                        style: TextStyle(
+                          color: Color(0xFFFFFFFF),
+                        ),
+                      ),
+                    ),
+                    Spacer(),
+                  ],
                 ),
-
-                onPressed: _saveScreen,
-                child: const Text('   save   ',style: TextStyle(color: Color(0xFFFFFFFF),),
-                ),
               ),
-
-              Spacer(),
-
-            ],
-              ),
-
-      ),
-      )
-    );
-
-
+            ));
   }
-
-
 }
 
 

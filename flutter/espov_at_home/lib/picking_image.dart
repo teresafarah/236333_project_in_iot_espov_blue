@@ -15,10 +15,7 @@ import 'global_vars.dart' as globals;
 
 import 'package:espov_at_home/starting_display.dart';
 
- // var fileslist = List<File>.empty(growable: true);
-
-
-
+// var fileslist = List<File>.empty(growable: true);
 
 //pick image from prev app attempt////////////////////////////////////////////
 // class PhotoChoice extends StatefulWidget {
@@ -184,23 +181,17 @@ import 'package:espov_at_home/starting_display.dart';
 //
 //
 
-
 class PickingPhoto extends StatelessWidget {
   const PickingPhoto({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       body: Center(
         child: AnimatedListSample(),
-
-
       ),
     );
   }
 }
-
-
 
 //
 // void main() {
@@ -215,7 +206,6 @@ class AnimatedListSample extends StatefulWidget {
 }
 
 class _AnimatedListSampleState extends State<AnimatedListSample> {
-
   ///////////////////////////////////////////
   File image = File('');
 
@@ -223,7 +213,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
     try {
       final image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-      if(image == null) return;
+      if (image == null) return;
 
       final imageTemp = File(image.path);
 
@@ -238,22 +228,22 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       print(my_height);
 
       // resize
-      ImageProperties properties = await FlutterNativeImage.getImageProperties(image.path);
-      File compressedFile = await FlutterNativeImage.compressImage(image.path,quality: 100,
-          targetWidth: 63,
-          targetHeight: 63);
+      ImageProperties properties =
+          await FlutterNativeImage.getImageProperties(image.path);
+      File compressedFile = await FlutterNativeImage.compressImage(image.path,
+          quality: 100, targetWidth: 63, targetHeight: 63);
 
       final compressed_image_temp = compressedFile;
-      var tmp_comp_decoded = await decodeImageFromList(compressed_image_temp.readAsBytesSync());
+      var tmp_comp_decoded =
+          await decodeImageFromList(compressed_image_temp.readAsBytesSync());
       int my_comp_width = tmp_comp_decoded.width;
       int my_comp_height = tmp_comp_decoded.height;
       print('printing compressed width and height');
       print(my_comp_width);
       print(my_comp_height);
 
-
-
-      final inputImg = await compressed_image_temp.readAsBytes(); // Converts the file to UInt8List
+      final inputImg = await compressed_image_temp
+          .readAsBytes(); // Converts the file to UInt8List
 
       final decoder = Imagi.JpegDecoder();
       final decodedImg = decoder.decodeImage(inputImg);
@@ -265,54 +255,47 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       List<int> blue_list = [];
 
       assert(decodedImg != null);
-      for(int y = 0; y < decodedImg!.height; y++) {
+      for (int y = 0; y < decodedImg!.height; y++) {
         // imgArr.add([]);
-        for(int x = 0; x < decodedImg!.width; x++) {
-          int red = decodedBytes[y*decodedImg.width*3 + x*3];
-          int green = decodedBytes[y*decodedImg.width*3 + x*3 + 1];
-          int blue = decodedBytes[y*decodedImg.width*3 + x*3 + 2];
+        for (int x = 0; x < decodedImg!.width; x++) {
+          int red = decodedBytes[y * decodedImg.width * 3 + x * 3];
+          int green = decodedBytes[y * decodedImg.width * 3 + x * 3 + 1];
+          int blue = decodedBytes[y * decodedImg.width * 3 + x * 3 + 2];
           // imgArr[y].add([red, green, blue]);
           red_list.add(red);
           green_list.add(green);
           blue_list.add(blue);
-          print([red,green,blue]);
+          print([red, green, blue]);
         }
       }
-      List<int> rgb_list = []..addAll(red_list)..addAll(green_list)..addAll(blue_list);
+      List<int> rgb_list = []
+        ..addAll(red_list)
+        ..addAll(green_list)
+        ..addAll(blue_list);
       print(rgb_list.length);
       final int index =
-      _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
-      globals.list_of_int_images.insert(index,rgb_list);
-
-
-
+          _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
+      globals.list_of_int_images.insert(index, rgb_list);
 
       setState(() => this.image = compressed_image_temp);
-
-    } on PlatformException catch(e) {
+    } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
 
-
-  _insert();
-
-
-
-
+    _insert();
   }
   ////////////////////////////////////////////
-
 
   final GlobalKey<AnimatedListState> _listKey = GlobalKey<AnimatedListState>();
   late ListModel<int> _list;
   int? _selectedItem;
   late int
-  _nextItem; // The next item inserted when the user presses the '+' button.
+      _nextItem; // The next item inserted when the user presses the '+' button.
 
   @override
   void initState() {
     globals.fileslist = List<File>.empty(growable: true);
-     globals.list_of_int_images = List<List<int>>.empty(growable: true);
+    globals.list_of_int_images = List<List<int>>.empty(growable: true);
 
     super.initState();
     _list = ListModel<int>(
@@ -356,9 +339,9 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
   // Insert the "next item" into the list model.
   void _insert() {
     final int index =
-    _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
+        _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
     _list.insert(index, _nextItem++);
-    globals.fileslist.insert(index,this.image);
+    globals.fileslist.insert(index, this.image);
   }
 
   // Remove the selected item from the list model.
@@ -371,20 +354,19 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
     }
 
     globals.fileslist.removeAt(_list.indexOf(_selectedItem!));
-
   }
-
-
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('', ),
-            // backgroundColor : Color(0xff79d7dd),
-          backgroundColor : Colors.transparent,
-          elevation : 0,
+          title: const Text(
+            '',
+          ),
+          // backgroundColor : Color(0xff79d7dd),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           // shadowColor: Colors.white,
           actions: <Widget>[
             Spacer(),
@@ -394,30 +376,29 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
               alignment: Alignment.center,
               child: TextButton(
                 style: ButtonStyle(
-                    backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    backgroundColor:
+                        MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18.0),
-                        )
-                    )
-                ),
+                      borderRadius: BorderRadius.circular(18.0),
+                    ))),
                 onPressed: () {
                   // globals.fileslist = List<File>.empty(growable: true);
 
                   Navigator.pop(context);
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return  ChatPage(server: globals.global_server);
-                  }
-                  )
-                  );
+                    return ChatPage(server: globals.global_server);
+                  }));
                 },
-                child: const Text('done',style: TextStyle(color: Color(0xFFFFFFFF),)),
+                child: const Text('done',
+                    style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                    )),
               ),
             ),
             Spacer(),
             IconButton(
-
-            color: Color(0xff79d7dd),
+              color: Color(0xff79d7dd),
               icon: const Icon(Icons.add_circle),
               iconSize: 45,
               onPressed: pickImage,
@@ -435,32 +416,32 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
             Spacer(),
             Container(
               height: 50,
-               width: 50,
+              width: 50,
               alignment: Alignment.center,
-               child: TextButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                      )
-                  )
-              ),
-                   onPressed: () {
+              child: TextButton(
+                style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                    ))),
+                onPressed: () {
                   globals.fileslist = List<File>.empty(growable: true);
-                  globals.list_of_int_images = List<List<int>>.empty(growable: true);
+                  globals.list_of_int_images =
+                      List<List<int>>.empty(growable: true);
 
                   Navigator.pop(context);
-                     Navigator.push(context, MaterialPageRoute(builder: (context) {
-                       return const PickingPhoto();
-                     }
-                     )
-                     );
-                   },
-              child: const Text('reset',style: TextStyle(color: Color(0xFFFFFFFF),)),
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const PickingPhoto();
+                  }));
+                },
+                child: const Text('reset',
+                    style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                    )),
+              ),
             ),
-            ),
-
 
             // TextButton(
             //   style: ButtonStyle(
@@ -476,7 +457,6 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
             //   child: const Text('reset',style: TextStyle(color: Color(0xFFFFFFFF),)),
             // ),
             Spacer(),
-
           ],
         ),
         body: Padding(
@@ -561,7 +541,7 @@ class ListModel<E> {
     if (removedItem != null) {
       _animatedList!.removeItem(
         index,
-            (BuildContext context, Animation<double> animation) {
+        (BuildContext context, Animation<double> animation) {
           return removedItemBuilder(removedItem, context, animation);
         },
       );
@@ -621,21 +601,17 @@ class CardItem extends StatelessWidget {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
-            child: Container(
-              decoration: deco,
-              child: new Image.file(globals.fileslist[item],
-                fit: BoxFit.cover,
-              ),
+          child: Container(
+            decoration: deco,
+            child: new Image.file(
+              globals.fileslist[item],
+              fit: BoxFit.cover,
             ),
-
-
-
-
+          ),
 
           // child: new Image.file(fileslist[item],
           //     fit: BoxFit.cover,
           //   ),
-
 
           // child: SizedBox(
           //   height: 80.0,

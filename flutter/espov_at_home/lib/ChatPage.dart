@@ -5,6 +5,7 @@ import 'package:espov_at_home/global_vars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'global_vars.dart' as globals;
+
 class ChatPage extends StatefulWidget {
   final BluetoothDevice? server;
 
@@ -123,24 +124,26 @@ class _ChatPage extends State<ChatPage> {
             Spacer(),
             Container(
                 margin: const EdgeInsets.all(8.0),
-                child:             TextButton(
+                child: TextButton(
                   style: ButtonStyle(
-                      backgroundColor: MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                      backgroundColor:
+                          MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                          )
-                      )
-                  ),
-                    onPressed: _send_when_connected
+                        borderRadius: BorderRadius.circular(18.0),
+                      ))),
+                  onPressed: _send_when_connected
                   // onPressed: isConnected
                   //     ? () => { globals.list_of_int_images.forEach((element) => _sendMessage(element)) }
                   //     : null
                   ,
-                  child: const Text('   GO!   ',style: TextStyle(color: Color(0xFFFFFFFF),),
+                  child: const Text(
+                    '   GO!   ',
+                    style: TextStyle(
+                      color: Color(0xFFFFFFFF),
+                    ),
                   ),
-                )
-            ),
+                )),
             Spacer(),
             // Flexible(
             //   child: ListView(
@@ -148,7 +151,6 @@ class _ChatPage extends State<ChatPage> {
             //       controller: listScrollController,
             //       children: list),
             // ),
-
           ],
         ),
       ),
@@ -229,8 +231,8 @@ class _ChatPage extends State<ChatPage> {
     }
   }
 
-  void _send_when_connected(){
-    while(isConnected != true) {}
-      globals.list_of_int_images.forEach((element) => _sendMessage(element));
+  void _send_when_connected() {
+    while (isConnected != true) {}
+    globals.list_of_int_images.forEach((element) => _sendMessage(element));
   }
 }
