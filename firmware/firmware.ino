@@ -52,7 +52,7 @@ void loop() {
   // check if new image is being received.
   if (bluetooth::available()) {
     loops_since_last_bt_msg = 0;
-    Serial.println("Some more bytes are available.");
+    // Serial.println("Some more bytes are available.");
     int i = 0;
     while (bluetooth::available()) {
       auto image_bytes = bluetooth::read();
