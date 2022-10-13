@@ -45,7 +45,7 @@ class DisplayTerminal extends StatelessWidget {
                     ))),
                 onPressed: () {
                   Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const MyHomePage();
+                    return const TextToPhoto();
                   }));
                 },
                 child: const Text(

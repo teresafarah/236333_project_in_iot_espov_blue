@@ -64,18 +64,105 @@ class MyCustomForm extends StatelessWidget {
 
 //
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
 
+class CustomTextBar extends StatefulWidget {
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _State createState() => _State();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _State extends State<CustomTextBar> {
+  double custFontSize = 20;
+  Color color = Colors.white;
+  void IncreaseFontSize() async{
+    setState(() {
+      if (custFontSize + 2 >= 200){
+        custFontSize = 200;
+        return;
+      }
+      custFontSize+=2;
+    });
+  }
+  void DecreaseFontSize() async{
+    setState(() {
+      if (custFontSize - 2 <0){
+        custFontSize = 0;
+        return;
+      }
+      custFontSize-=2;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+          child: Column(children: <Widget>[
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+              child: TextField(
+                style: TextStyle(
+                    fontSize: custFontSize
+                ),
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () {
+                IncreaseFontSize();
+              },
+              child: Text('Increase Font Size'),
+            ),
+            TextButton(
+              onPressed: () {
+                DecreaseFontSize();
+              },
+              child: Text('Decrease Font Size'),
+            ),
+          ])),
+    );
+  }
+}
+
+class TextToPhoto extends StatefulWidget {
+  const TextToPhoto({Key? key}) : super(key: key);
+
+  @override
+  _TextToPhoto createState() => _TextToPhoto();
+}
+
+
+class _TextToPhoto extends State<TextToPhoto> {
+  final fieldText = TextEditingController();
+
+  double custFontSize = 20;
   GlobalKey _globalKey = GlobalKey();
   TextEditingController? _textEditingControllerFive;
   ScreenshotController screenshotController = ScreenshotController();
   static GlobalKey previewContainer = new GlobalKey();
+
+  void IncreaseFontSize() async{
+    setState(() {
+      if (custFontSize + 2 >= 200){
+        custFontSize = 200;
+        return;
+      }
+      custFontSize+=2;
+    });
+  }
+  void DecreaseFontSize() async{
+    setState(() {
+      if (custFontSize - 2 <0){
+        custFontSize = 0;
+        return;
+      }
+      custFontSize-=2;
+    });
+  }
+  void clearText() {
+    fieldText.clear();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,34 +177,59 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    border: Border.all(width: 4,color: Color(0xff79d7dd)),
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
                   constraints: BoxConstraints(
                       maxHeight: 300,
                       maxWidth: 300,
                       minHeight: 300,
                       minWidth: 300),
-                  decoration: BoxDecoration(
-                      color: Colors.black,
-                      border: Border.all(width: 4, color: Color(0xff79d7dd)),
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
+                  // decoration: BoxDecoration(
+                  //     // color: Colors.black,
+                  //     border: Border.all(width: 4, color: Color(0xff79d7dd)),
+                  //     borderRadius: BorderRadius.all(Radius.circular(20))),
                   child: Screenshot(
                     controller: screenshotController,
-                    child: AutoSizeTextField(
-                      cursorColor: Colors.transparent,
-                      controller: _textEditingControllerFive,
-                      fullwidth: false,
-                      minFontSize: 0,
-                      maxLines: null,
-                      style: TextStyle(fontSize: 50, color: Color(0xff79d7dd)),
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: const EdgeInsets.all(20)),
+                    child: SizedBox(
+                      height: 300,
+                      width: 300,
+
+                    child : TextField(
+                      controller: fieldText,
                       keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      cursorColor: Colors.transparent,
+                      style: TextStyle(
+                          fontSize: custFontSize,
+                        color: Colors.blue,
+                      ),
+                      decoration: InputDecoration(
+                          border:  InputBorder.none,
+                          ),
                     ),
+                      ),
+                    ),
+
+                    // child: AutoSizeTextField(
+                    //   // maxFontSize: 200,
+                    //   cursorColor: Colors.transparent,
+                    //   controller: _textEditingControllerFive,
+                    //   fullwidth: false,
+                    //   minFontSize: 0,
+                    //   maxLines: null,
+                    //   style: TextStyle(fontSize: 50, color: Color(0xff79d7dd)),
+                    //   textAlignVertical: TextAlignVertical.center,
+                    //   decoration: InputDecoration(
+                    //       border: InputBorder.none,
+                    //       isDense: true,
+                    //       contentPadding: const EdgeInsets.all(20)),
+                    //   keyboardType: TextInputType.multiline,
+                    // ),
                   ),
                 ),
-              ),
               TextButton(
                 style: ButtonStyle(
                     backgroundColor:
@@ -126,9 +238,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ))),
-                onPressed: () {
-                  _textEditingControllerFive?.clear();
-                },
+                onPressed: clearText
+                ,
                 child: const Text(
                   '   clear   ',
                   style: TextStyle(
@@ -159,6 +270,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     color: Color(0xFFFFFFFF),
                   ),
                 ),
+              ),
+              TextButton(
+                onPressed: () {
+                  IncreaseFontSize();
+                },
+                child: Text('Increase Font Size'),
+              ),
+              TextButton(
+                onPressed: () {
+                  DecreaseFontSize();
+                },
+                child: Text('Decrease Font Size'),
               ),
               // TextButton(
               //     onPressed: () {
@@ -379,3 +502,8 @@ class _MyHomePageState extends State<MyHomePage> {
 //
 //
 // }
+
+
+
+
+
