@@ -7,6 +7,7 @@ import 'package:espov_at_home/global_vars.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'global_vars.dart' as globals;
+import 'dart:async';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice? server;
@@ -38,6 +39,9 @@ class _ChatPage extends State<ChatPage> {
   bool get isConnected => (connection?.isConnected ?? false);
   bool isSending = true;
   bool isDisconnecting = false;
+
+  bool isSlideshow = false;
+  int timer = 0;
 
   @override
   void initState() {
@@ -97,17 +101,6 @@ class _ChatPage extends State<ChatPage> {
       ) ;
 
       list.add(
-
-    //     Padding(
-    //       padding: const EdgeInsets.all(16.0),
-    // child :Container(
-    //     alignment: Alignment.center,
-    //     child: new Image.file(
-    //       globals.fileslist[i],
-    //       fit: BoxFit.cover,
-    //     ),
-    //   ),
-    //     )
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -135,24 +128,31 @@ class _ChatPage extends State<ChatPage> {
                                 color: Colors.black,
                               ),
                             ))
-                          : (TextButton(
-                              style: ButtonStyle(
-                                  backgroundColor:
-                                      const MaterialStatePropertyAll<Color>(
-                                          Color(0xff79d7dd)),
-                                  shape: MaterialStateProperty.all<
-                                          RoundedRectangleBorder>(
-                                      RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(18.0),
-                                  ))),
-                              onPressed: isConnected
-                                  ? () => {
-                                          _sendMessage(globals.list_of_int_images[i])
-                                      }
-                                  : null,
-                    child: Text("Send image", style: TextStyle(color: Colors.white),)
+                          : (isSlideshow
+                      ? (const Text(
+                    '   Doing Slideshow...   ',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
+                  ))
+                      : (TextButton(
+                      style: ButtonStyle(
+                          backgroundColor:
+                          const MaterialStatePropertyAll<Color>(
+                              Color(0xff79d7dd)),
+                          shape: MaterialStateProperty.all<
+                              RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ))),
+                      onPressed: isConnected
+                          ? () => {
+                        _sendMessage(globals.list_of_int_images[i])
+                      }
+                          : null,
+                      child: Text("Send image", style: TextStyle(color: Colors.white),)
 
-                            )))),
+                  ))))),
 
 
 
@@ -162,8 +162,72 @@ class _ChatPage extends State<ChatPage> {
       )
       );
 
+
+
     }
-    // return list;// all widget added now retrun the list here
+
+    list.add(
+
+      !isSlideshow ? (
+      TextButton(
+        style: ButtonStyle(
+            backgroundColor:
+            MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ))),
+        onPressed: () {
+          // print("Pressed start slideshow");
+          // FlutterBluetoothSerial.instance.openSettings();
+          _slideShow();
+        },
+        child: const Text(
+          '   Start Slideshow   ',
+          style: TextStyle(
+            color: Color(0xFFFFFFFF),
+          ),
+        ),
+      )) : (TextButton(
+        style: ButtonStyle(
+            backgroundColor:
+            MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18.0),
+                ))),
+        onPressed: () {
+          setState(() {
+            isSlideshow = false;
+          });
+          // FlutterBluetoothSerial.instance.openSettings();
+        },
+        child: const Text(
+          '   Stop Slideshow   ',
+          style: TextStyle(
+            color: Color(0xFFFFFFFF),
+          ),
+        ),
+      ))
+      ,
+    );
+
+      list.add(
+        isSlideshow ?
+        (
+      Text(
+        '   ' + timer.toString() + '   ',
+        style: TextStyle(
+          color: Colors.black,
+        ),
+      )
+        ): ((Text(""))
+        )
+      );
+
+
+
+
     return list;
   }
 
@@ -298,7 +362,39 @@ class _ChatPage extends State<ChatPage> {
     }
   }
 
-  void _sendMessage(List<int> list) async {
+  void _slideShow() async {
+    if (globals.list_of_int_images.isNotEmpty) {
+      setState(() {
+        isSlideshow = true;
+      });
+
+      while (isSlideshow) {
+        for (int i = 0; i < list_of_int_images.length; i++) {
+          if (!isSlideshow) {
+            return;
+          }
+          // try sending 3 times, the first blocks the counter while the others
+          // do not
+          _sendMessage(globals.list_of_int_images[i]).then((value) async => {
+            await Future.delayed(const Duration(seconds: 2)),
+            _sendMessage(globals.list_of_int_images[i])
+          }
+          );
+          for (int i = 10; i > 0; i--) {
+            if (!isSlideshow) {
+              return;
+            }
+            setState(() {
+              timer = i;
+            });
+            await Future.delayed(const Duration(seconds: 1));
+          }
+        }
+      }
+    }
+  }
+
+  Future<void> _sendMessage(List<int> list) async {
     // textEditingController.clear();
     const int BytesEachTime = 100;
     if (list.length > 0) {

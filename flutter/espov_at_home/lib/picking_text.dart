@@ -143,8 +143,21 @@ class _TextToPhoto extends State<TextToPhoto> {
   final fieldText = TextEditingController();
   Color custFontColor = Color(0xff79d7dd);
   double custFontSize = 20;
+  FontWeight custWeight = FontWeight.normal;
   GlobalKey _globalKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
+
+  void changeFontWeight() async{
+    setState(() {
+      if (custWeight == FontWeight.normal){
+        custWeight = FontWeight.bold;
+        return;
+      }else {
+        custWeight = FontWeight.normal;
+        return ;
+      }
+    });
+  }
   void changeColorToRed() async{
     setState(() {
       custFontColor = Colors.red;
@@ -236,6 +249,14 @@ class _TextToPhoto extends State<TextToPhoto> {
 
                 ],
               ),
+              IconButton(
+                icon: Icon(Icons.format_bold),
+                color: Color(0xff79d7dd),
+                onPressed: () {
+                  changeFontWeight();
+                },
+              ),
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -322,6 +343,7 @@ class _TextToPhoto extends State<TextToPhoto> {
                       style: TextStyle(
                           fontSize: custFontSize,
                         color: custFontColor,
+                        fontWeight: custWeight,
                       ),
                       decoration: InputDecoration(
                           border:  InputBorder.none,

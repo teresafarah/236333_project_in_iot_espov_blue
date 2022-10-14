@@ -223,9 +223,6 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       var tmp_decoded = await decodeImageFromList(imageTemp.readAsBytesSync());
       int my_width = tmp_decoded.width;
       int my_height = tmp_decoded.height;
-      print('printing width and height');
-      print(my_width);
-      print(my_height);
 
       // resize
       ImageProperties properties =
@@ -238,9 +235,7 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
           await decodeImageFromList(compressed_image_temp.readAsBytesSync());
       int my_comp_width = tmp_comp_decoded.width;
       int my_comp_height = tmp_comp_decoded.height;
-      print('printing compressed width and height');
-      print(my_comp_width);
-      print(my_comp_height);
+
 
       final inputImg = await compressed_image_temp
           .readAsBytes(); // Converts the file to UInt8List
@@ -265,14 +260,14 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
           red_list.add(red);
           green_list.add(green);
           blue_list.add(blue);
-          print([red, green, blue]);
+          // print([red, green, blue]);
         }
       }
       List<int> rgb_list = []
         ..addAll(red_list)
         ..addAll(green_list)
         ..addAll(blue_list);
-      print(rgb_list.length);
+      // print(rgb_list.length);
       final int index =
           _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
       for (int i = 0 ; i < rgb_list.length ; i++){
@@ -316,11 +311,11 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       animation: animation,
       item: index,
       selected: _selectedItem == _list[index],
-      onTap: () {
-        setState(() {
-          _selectedItem = _selectedItem == _list[index] ? null : _list[index];
-        });
-      },
+      // onTap: () {
+      //   setState(() {
+      //     _selectedItem = _selectedItem == _list[index] ? null : _list[index];
+      //   });
+      // },
     );
   }
 
