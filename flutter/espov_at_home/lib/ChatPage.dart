@@ -98,140 +98,119 @@ class _ChatPage extends State<ChatPage> {
         SizedBox(
           height: 25,
         ),
-      ) ;
+      );
 
       list.add(
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Container(
-              alignment: Alignment.center,
-              child: new Image.file(
-                globals.fileslist[i],
-                fit: BoxFit.cover,
-              ),
+          Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+        Container(
+          alignment: Alignment.center,
+          child: new Image.file(
+            globals.fileslist[i],
+            fit: BoxFit.cover,
           ),
-
-              Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: !isConnected
-                      ? (const Text(
-                          '   Connecting to device...   ',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ))
-                      : (isSending
-                          ? (const Text(
-                              '   Sending image...   ',
-                              style: TextStyle(
-                                color: Colors.black,
-                              ),
-                            ))
-                          : (isSlideshow
-                      ? (const Text(
-                    '   Doing Slideshow...   ',
+        ),
+        Container(
+            margin: const EdgeInsets.all(8.0),
+            child: !isConnected
+                ? (const Text(
+                    '   Connecting to device...   ',
                     style: TextStyle(
                       color: Colors.black,
                     ),
                   ))
-                      : (TextButton(
-                      style: ButtonStyle(
-                          backgroundColor:
-                          const MaterialStatePropertyAll<Color>(
-                              Color(0xff79d7dd)),
-                          shape: MaterialStateProperty.all<
-                              RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                              ))),
-                      onPressed: isConnected
-                          ? () => {
-                        _sendMessage(globals.list_of_int_images[i])
-                      }
-                          : null,
-                      child: Text("Send image", style: TextStyle(color: Colors.white),)
-
-                  ))))),
-
-
-
-
-
-            ]
-      )
-      );
-
-
-
+                : (isSending
+                    ? (const Text(
+                        '   Sending image...   ',
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ))
+                    : (isSlideshow
+                        ? (const Text(
+                            '   Doing Slideshow...   ',
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ))
+                        : (TextButton(
+                            style: ButtonStyle(
+                                backgroundColor:
+                                    const MaterialStatePropertyAll<Color>(
+                                        Color(0xff79d7dd)),
+                                shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                    RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(18.0),
+                                ))),
+                            onPressed: isConnected
+                                ? () => {
+                                      _sendMessage(
+                                          globals.list_of_int_images[i])
+                                    }
+                                : null,
+                            child: Text(
+                              "Send image",
+                              style: TextStyle(color: Colors.white),
+                            )))))),
+      ]));
     }
 
     list.add(
-
-      !isSlideshow ? (
-      TextButton(
-        style: ButtonStyle(
-            backgroundColor:
-            MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ))),
-        onPressed: () {
-          // print("Pressed start slideshow");
-          // FlutterBluetoothSerial.instance.openSettings();
-          _slideShow();
-        },
-        child: const Text(
-          '   Start Slideshow   ',
-          style: TextStyle(
-            color: Color(0xFFFFFFFF),
-          ),
-        ),
-      )) : (TextButton(
-        style: ButtonStyle(
-            backgroundColor:
-            MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18.0),
-                ))),
-        onPressed: () {
-          setState(() {
-            isSlideshow = false;
-          });
-          // FlutterBluetoothSerial.instance.openSettings();
-        },
-        child: const Text(
-          '   Stop Slideshow   ',
-          style: TextStyle(
-            color: Color(0xFFFFFFFF),
-          ),
-        ),
-      ))
-      ,
+      !isSlideshow
+          ? (TextButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ))),
+              onPressed: () {
+                // print("Pressed start slideshow");
+                // FlutterBluetoothSerial.instance.openSettings();
+                _slideShow();
+              },
+              child: const Text(
+                '   Start Slideshow   ',
+                style: TextStyle(
+                  color: Color(0xFFFFFFFF),
+                ),
+              ),
+            ))
+          : (TextButton(
+              style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStatePropertyAll<Color>(Color(0xff79d7dd)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18.0),
+                  ))),
+              onPressed: () {
+                setState(() {
+                  isSlideshow = false;
+                });
+                // FlutterBluetoothSerial.instance.openSettings();
+              },
+              child: const Text(
+                '   Stop Slideshow   ',
+                style: TextStyle(
+                  color: Color(0xFFFFFFFF),
+                ),
+              ),
+            )),
     );
 
-      list.add(
-        isSlideshow ?
-        (
-      Text(
-        '   ' + timer.toString() + '   ',
-        style: TextStyle(
-          color: Colors.black,
-        ),
-      )
-        ): ((Text(""))
-        )
-      );
-
-
-
+    list.add(isSlideshow
+        ? (Text(
+            '   ' + timer.toString() + '   ',
+            style: TextStyle(
+              color: Colors.black,
+            ),
+          ))
+        : ((Text(""))));
 
     return list;
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -270,44 +249,43 @@ class _ChatPage extends State<ChatPage> {
       body: Center(
         child: ListView(
           children: data(),
-            // const Spacer(),
-            // Container(
-            //     margin: const EdgeInsets.all(8.0),
-            //     child: !isConnected
-            //         ? (const Text(
-            //             '   Connecting to device...   ',
-            //             style: TextStyle(
-            //               color: Colors.black,
-            //             ),
-            //           ))
-            //         : (isSending
-            //             ? (const Text(
-            //                 '   Sending image...   ',
-            //                 style: TextStyle(
-            //                   color: Colors.black,
-            //                 ),
-            //               ))
-            //             : (TextButton(
-            //                 style: ButtonStyle(
-            //                     backgroundColor:
-            //                         const MaterialStatePropertyAll<Color>(
-            //                             Color(0xff79d7dd)),
-            //                     shape: MaterialStateProperty.all<
-            //                             RoundedRectangleBorder>(
-            //                         RoundedRectangleBorder(
-            //                       borderRadius: BorderRadius.circular(18.0),
-            //                     ))),
-            //                 onPressed: isConnected
-            //                     ? () => {
-            //                           globals.list_of_int_images.forEach(
-            //                               (element) => _sendMessage(element))
-            //                         }
-            //                     : null,
-            //       child: Text("Send image", style: TextStyle(color: Colors.white),)
-            //
-            //               )))),
-            // const Spacer(),
-
+          // const Spacer(),
+          // Container(
+          //     margin: const EdgeInsets.all(8.0),
+          //     child: !isConnected
+          //         ? (const Text(
+          //             '   Connecting to device...   ',
+          //             style: TextStyle(
+          //               color: Colors.black,
+          //             ),
+          //           ))
+          //         : (isSending
+          //             ? (const Text(
+          //                 '   Sending image...   ',
+          //                 style: TextStyle(
+          //                   color: Colors.black,
+          //                 ),
+          //               ))
+          //             : (TextButton(
+          //                 style: ButtonStyle(
+          //                     backgroundColor:
+          //                         const MaterialStatePropertyAll<Color>(
+          //                             Color(0xff79d7dd)),
+          //                     shape: MaterialStateProperty.all<
+          //                             RoundedRectangleBorder>(
+          //                         RoundedRectangleBorder(
+          //                       borderRadius: BorderRadius.circular(18.0),
+          //                     ))),
+          //                 onPressed: isConnected
+          //                     ? () => {
+          //                           globals.list_of_int_images.forEach(
+          //                               (element) => _sendMessage(element))
+          //                         }
+          //                     : null,
+          //       child: Text("Send image", style: TextStyle(color: Colors.white),)
+          //
+          //               )))),
+          // const Spacer(),
         ),
       ),
     );
@@ -376,10 +354,9 @@ class _ChatPage extends State<ChatPage> {
           // try sending 3 times, the first blocks the counter while the others
           // do not
           _sendMessage(globals.list_of_int_images[i]).then((value) async => {
-            await Future.delayed(const Duration(seconds: 2)),
-            _sendMessage(globals.list_of_int_images[i])
-          }
-          );
+                await Future.delayed(const Duration(seconds: 2)),
+                _sendMessage(globals.list_of_int_images[i])
+              });
           for (int i = 10; i > 0; i--) {
             if (!isSlideshow) {
               return;

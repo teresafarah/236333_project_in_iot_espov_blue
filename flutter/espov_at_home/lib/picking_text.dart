@@ -22,8 +22,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 
-
-
 // class PickingText extends StatelessWidget {
 //   const PickingText({Key? key}) : super(key: key);
 //   @override
@@ -138,7 +136,6 @@ class TextToPhoto extends StatefulWidget {
   _TextToPhoto createState() => _TextToPhoto();
 }
 
-
 class _TextToPhoto extends State<TextToPhoto> {
   final fieldText = TextEditingController();
   Color custFontColor = Color(0xff79d7dd);
@@ -147,74 +144,80 @@ class _TextToPhoto extends State<TextToPhoto> {
   GlobalKey _globalKey = GlobalKey();
   ScreenshotController screenshotController = ScreenshotController();
 
-  void changeFontWeight() async{
+  void changeFontWeight() async {
     setState(() {
-      if (custWeight == FontWeight.normal){
+      if (custWeight == FontWeight.normal) {
         custWeight = FontWeight.bold;
         return;
-      }else {
+      } else {
         custWeight = FontWeight.normal;
-        return ;
+        return;
       }
     });
   }
-  void changeColorToRed() async{
+
+  void changeColorToRed() async {
     setState(() {
       custFontColor = Colors.red;
     });
   }
-  void changeColorToGreen() async{
+
+  void changeColorToGreen() async {
     setState(() {
       custFontColor = Colors.green;
     });
   }
-  void changeColorToBlue() async{
+
+  void changeColorToBlue() async {
     setState(() {
       custFontColor = Colors.blue;
     });
   }
-  void changeColorToYellow() async{
+
+  void changeColorToYellow() async {
     setState(() {
       custFontColor = Colors.yellow;
     });
   }
-  void changeColorToTeal() async{
+
+  void changeColorToTeal() async {
     setState(() {
       custFontColor = Color(0xff79d7dd);
     });
   }
-  void changeColorToDeepOrange() async{
+
+  void changeColorToDeepOrange() async {
     setState(() {
       custFontColor = Colors.deepOrange;
     });
   }
 
-  void changeColorToPink() async{
+  void changeColorToPink() async {
     setState(() {
       custFontColor = Colors.pink;
     });
   }
 
-
-
-  void IncreaseFontSize() async{
+  void IncreaseFontSize() async {
     setState(() {
-      if (custFontSize + 2 >= 200){
+      if (custFontSize + 2 >= 200) {
         custFontSize = 200;
         return;
       }
-      custFontSize+=2;
+      custFontSize += 2;
     });
   }
-  void DecreaseFontSize() async{
+
+  void DecreaseFontSize() async {
     setState(() {
-      if (custFontSize - 2 <0){
+      if (custFontSize - 2 < 0) {
         custFontSize = 0;
         return;
       }
-      custFontSize-=2;
+      custFontSize -= 2;
     });
   }
+
   void clearText() {
     fieldText.clear();
   }
@@ -245,8 +248,6 @@ class _TextToPhoto extends State<TextToPhoto> {
                       DecreaseFontSize();
                     },
                   ),
-
-
                 ],
               ),
               IconButton(
@@ -256,7 +257,6 @@ class _TextToPhoto extends State<TextToPhoto> {
                   changeFontWeight();
                 },
               ),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -295,7 +295,6 @@ class _TextToPhoto extends State<TextToPhoto> {
                       changeColorToTeal();
                     },
                   ),
-
                   IconButton(
                     icon: Icon(Icons.circle),
                     color: Colors.pink,
@@ -317,7 +316,7 @@ class _TextToPhoto extends State<TextToPhoto> {
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.black,
-                    border: Border.all(width: 4,color: Color(0xff79d7dd)),
+                    border: Border.all(width: 4, color: Color(0xff79d7dd)),
                     borderRadius: BorderRadius.all(Radius.circular(20)),
                   ),
                   constraints: BoxConstraints(
@@ -334,27 +333,24 @@ class _TextToPhoto extends State<TextToPhoto> {
                     child: SizedBox(
                       height: 300,
                       width: 300,
-
-                    child : TextField(
-                      controller: fieldText,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                      cursorColor: Colors.transparent,
-                      style: TextStyle(
+                      child: TextField(
+                        controller: fieldText,
+                        keyboardType: TextInputType.multiline,
+                        maxLines: null,
+                        cursorColor: Colors.transparent,
+                        style: TextStyle(
                           fontSize: custFontSize,
-                        color: custFontColor,
-                        fontWeight: custWeight,
+                          color: custFontColor,
+                          fontWeight: custWeight,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                        ),
                       ),
-                      decoration: InputDecoration(
-                          border:  InputBorder.none,
-                          ),
                     ),
-                      ),
-                    ),
-
-
                   ),
                 ),
+              ),
               TextButton(
                 style: ButtonStyle(
                     backgroundColor:
@@ -363,8 +359,7 @@ class _TextToPhoto extends State<TextToPhoto> {
                         RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(18.0),
                     ))),
-                onPressed: clearText
-                ,
+                onPressed: clearText,
                 child: const Text(
                   '   clear   ',
                   style: TextStyle(
@@ -396,11 +391,6 @@ class _TextToPhoto extends State<TextToPhoto> {
                   ),
                 ),
               ),
-
-
-
-
-
             ],
           ),
         ),
@@ -474,9 +464,6 @@ class _TextToPhoto extends State<TextToPhoto> {
                         _saveScreen();
                         Navigator.pop(context);
                         Navigator.pop(context);
-
-
-
                       },
                       child: const Text(
                         '   save   ',
