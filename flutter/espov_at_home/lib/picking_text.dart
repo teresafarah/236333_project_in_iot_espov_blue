@@ -22,108 +22,114 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:screenshot/screenshot.dart';
 
-class PickingText extends StatelessWidget {
-  const PickingText({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              MyCustomForm(),
-            ]),
-      ),
-    );
-  }
-}
 
-class MyCustomForm extends StatelessWidget {
-  const MyCustomForm({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-          child: TextField(
-            decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter a simple text',
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
+// class PickingText extends StatelessWidget {
+//   const PickingText({Key? key}) : super(key: key);
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//         child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             crossAxisAlignment: CrossAxisAlignment.center,
+//             mainAxisSize: MainAxisSize.min,
+//             children: <Widget>[
+//               MyCustomForm(),
+//             ]),
+//       ),
+//     );
+//   }
+// }
 //
-
-
-class CustomTextBar extends StatefulWidget {
-  @override
-  _State createState() => _State();
-}
-
-class _State extends State<CustomTextBar> {
-  double custFontSize = 20;
-  Color color = Colors.white;
-  void IncreaseFontSize() async{
-    setState(() {
-      if (custFontSize + 2 >= 200){
-        custFontSize = 200;
-        return;
-      }
-      custFontSize+=2;
-    });
-  }
-  void DecreaseFontSize() async{
-    setState(() {
-      if (custFontSize - 2 <0){
-        custFontSize = 0;
-        return;
-      }
-      custFontSize-=2;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-          child: Column(children: <Widget>[
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-              child: TextField(
-                style: TextStyle(
-                    fontSize: custFontSize
-                ),
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                IncreaseFontSize();
-              },
-              child: Text('Increase Font Size'),
-            ),
-            TextButton(
-              onPressed: () {
-                DecreaseFontSize();
-              },
-              child: Text('Decrease Font Size'),
-            ),
-          ])),
-    );
-  }
-}
+// class MyCustomForm extends StatelessWidget {
+//   const MyCustomForm({Key? key}) : super(key: key);
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: <Widget>[
+//         const Padding(
+//           padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+//           child: TextField(
+//             decoration: InputDecoration(
+//               border: OutlineInputBorder(),
+//               hintText: 'Enter a simple text',
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
+//
+// //
+//
+//
+// class CustomTextBar extends StatefulWidget {
+//   @override
+//   _State createState() => _State();
+// }
+//
+// class _State extends State<CustomTextBar> {
+//   double custFontSize = 20;
+//   Color color = Colors.white;
+//   void IncreaseFontSize() async{
+//     setState(() {
+//       if (custFontSize + 2 >= 200){
+//         custFontSize = 200;
+//         return;
+//       }
+//       custFontSize+=2;
+//     });
+//   }
+//   void DecreaseFontSize() async{
+//     setState(() {
+//       if (custFontSize - 2 <0){
+//         custFontSize = 0;
+//         return;
+//       }
+//       custFontSize-=2;
+//     });
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Center(
+//           child: Column(children: <Widget>[
+//             Padding(
+//               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+//               child: TextField(
+//                 style: TextStyle(
+//                     fontSize: custFontSize,
+//                   color : Colors.green,
+//                 ),
+//                 decoration: InputDecoration(
+//                   border: OutlineInputBorder(),
+//                 ),
+//               ),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 IncreaseFontSize();
+//               },
+//               child: Text('Increase Font Size'),
+//             ),
+//             TextButton(
+//               onPressed: () {
+//                 DecreaseFontSize();
+//               },
+//               child: Text('Decrease Font Size'),
+//             ),
+//
+//
+//
+//           ])),
+//     );
+//   }
+// }
 
 class TextToPhoto extends StatefulWidget {
   const TextToPhoto({Key? key}) : super(key: key);
@@ -135,12 +141,48 @@ class TextToPhoto extends StatefulWidget {
 
 class _TextToPhoto extends State<TextToPhoto> {
   final fieldText = TextEditingController();
-
+  Color custFontColor = Color(0xff79d7dd);
   double custFontSize = 20;
   GlobalKey _globalKey = GlobalKey();
-  TextEditingController? _textEditingControllerFive;
   ScreenshotController screenshotController = ScreenshotController();
-  static GlobalKey previewContainer = new GlobalKey();
+  void changeColorToRed() async{
+    setState(() {
+      custFontColor = Colors.red;
+    });
+  }
+  void changeColorToGreen() async{
+    setState(() {
+      custFontColor = Colors.green;
+    });
+  }
+  void changeColorToBlue() async{
+    setState(() {
+      custFontColor = Colors.blue;
+    });
+  }
+  void changeColorToYellow() async{
+    setState(() {
+      custFontColor = Colors.yellow;
+    });
+  }
+  void changeColorToTeal() async{
+    setState(() {
+      custFontColor = Color(0xff79d7dd);
+    });
+  }
+  void changeColorToDeepOrange() async{
+    setState(() {
+      custFontColor = Colors.deepOrange;
+    });
+  }
+
+  void changeColorToPink() async{
+    setState(() {
+      custFontColor = Colors.pink;
+    });
+  }
+
+
 
   void IncreaseFontSize() async{
     setState(() {
@@ -173,7 +215,82 @@ class _TextToPhoto extends State<TextToPhoto> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               SizedBox(height: 150),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.add_circle),
+                    color: Color(0xff79d7dd),
+                    onPressed: () {
+                      IncreaseFontSize();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.remove_circle),
+                    color: Color(0xff79d7dd),
+                    onPressed: () {
+                      DecreaseFontSize();
+                    },
+                  ),
 
+
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.blue,
+                    onPressed: () {
+                      changeColorToBlue();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.red,
+                    onPressed: () {
+                      changeColorToRed();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.green,
+                    onPressed: () {
+                      changeColorToGreen();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.yellow,
+                    onPressed: () {
+                      changeColorToYellow();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Color(0xff79d7dd),
+                    onPressed: () {
+                      changeColorToTeal();
+                    },
+                  ),
+
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.pink,
+                    onPressed: () {
+                      changeColorToPink();
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.circle),
+                    color: Colors.deepOrange,
+                    onPressed: () {
+                      changeColorToDeepOrange();
+                    },
+                  ),
+                ],
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Container(
@@ -204,7 +321,7 @@ class _TextToPhoto extends State<TextToPhoto> {
                       cursorColor: Colors.transparent,
                       style: TextStyle(
                           fontSize: custFontSize,
-                        color: Colors.blue,
+                        color: custFontColor,
                       ),
                       decoration: InputDecoration(
                           border:  InputBorder.none,
@@ -213,21 +330,7 @@ class _TextToPhoto extends State<TextToPhoto> {
                       ),
                     ),
 
-                    // child: AutoSizeTextField(
-                    //   // maxFontSize: 200,
-                    //   cursorColor: Colors.transparent,
-                    //   controller: _textEditingControllerFive,
-                    //   fullwidth: false,
-                    //   minFontSize: 0,
-                    //   maxLines: null,
-                    //   style: TextStyle(fontSize: 50, color: Color(0xff79d7dd)),
-                    //   textAlignVertical: TextAlignVertical.center,
-                    //   decoration: InputDecoration(
-                    //       border: InputBorder.none,
-                    //       isDense: true,
-                    //       contentPadding: const EdgeInsets.all(20)),
-                    //   keyboardType: TextInputType.multiline,
-                    // ),
+
                   ),
                 ),
               TextButton(
@@ -271,23 +374,11 @@ class _TextToPhoto extends State<TextToPhoto> {
                   ),
                 ),
               ),
-              TextButton(
-                onPressed: () {
-                  IncreaseFontSize();
-                },
-                child: Text('Increase Font Size'),
-              ),
-              TextButton(
-                onPressed: () {
-                  DecreaseFontSize();
-                },
-                child: Text('Decrease Font Size'),
-              ),
-              // TextButton(
-              //     onPressed: () {
-              //       _textEditingControllerFive?.clear();
-              //     },
-              //     child: Text('clear'))
+
+
+
+
+
             ],
           ),
         ),
@@ -298,12 +389,10 @@ class _TextToPhoto extends State<TextToPhoto> {
   @override
   void initState() {
     super.initState();
-    _textEditingControllerFive = TextEditingController();
   }
 
   @override
   void dispose() {
-    _textEditingControllerFive?.dispose();
     super.dispose();
   }
 
@@ -359,7 +448,14 @@ class _TextToPhoto extends State<TextToPhoto> {
                                   RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18.0),
                           ))),
-                      onPressed: _saveScreen,
+                      onPressed: () {
+                        _saveScreen();
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+
+
+
+                      },
                       child: const Text(
                         '   save   ',
                         style: TextStyle(
