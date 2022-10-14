@@ -47,4 +47,10 @@ Here's a screenshot from the app:
 ![Splash Screen From App](images/app_screenshots/app%201.jpeg)
 
 
-More images can be found under images.
+**More images can be found under images.**
+
+
+# Parameters
+
+There are some changeable parameters for the firmware, they can be found in
+`globals.h` file.
