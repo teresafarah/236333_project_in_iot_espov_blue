@@ -65,8 +65,8 @@ void loop() {
     loops_since_last_bt_msg++;
   }
 
-  // clear within a half second (2000 == 5 seconds)
-  if (loops_since_last_bt_msg == 200) {
+  // clear within a second (2000 == 5 seconds)
+  if (loops_since_last_bt_msg == 400) {
     image::clear_pending_image();
   }
 }
