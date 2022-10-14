@@ -41,6 +41,10 @@ For the project we used a few esp32 libraries, these are:
 | Adafruit_NeoPixel | Adafruit          | 1.10.6  | Manages writing to the LEDs                            |
 | esp32             | Espressif Systems | 1.0.6   | Allows working with esp32 and contains BluetoothSerial |
 
+# Documentation
+
+Further documentation and images can be found in the folder named 
+**documentation**.
 
 ## License
 
