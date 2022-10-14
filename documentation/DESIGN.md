@@ -31,4 +31,20 @@ Here is an image describing just that:
 
 ![The Display](images/display/display%201.jpeg)
 
+# The App
 
+The app communicates with the display using bluetooth,
+it can take any image and resize it into the right size
+(number of LEDs on display) and sends that data over to 
+the display to show.
+
+Another feature is the ability to write any message 
+(including multiple languages and emojis) and send that message
+to the display to show.
+
+Here's a screenshot from the app:
+
+![Splash Screen From App](images/app_screenshots/app%201.jpeg)
+
+
+More images can be found under images.
