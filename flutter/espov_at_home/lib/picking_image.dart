@@ -602,6 +602,7 @@ class CardItem extends StatelessWidget {
           behavior: HitTestBehavior.opaque,
           onTap: onTap,
           child: Container(
+            alignment: Alignment.center,
             decoration: deco,
             child: new Image.file(
               globals.fileslist[item],

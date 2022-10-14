@@ -50,7 +50,8 @@ dependencies:
   image_gallery_saver: ^1.7.1
   dio: ^4.0.0-beta6
   fluttertoast: ^8.0.1-nullsafety.0
-
+flutter_colorpicker: ^1.0.3
+painter: ^2.0.0
 
 dev_dependencies:
   flutter_test:
