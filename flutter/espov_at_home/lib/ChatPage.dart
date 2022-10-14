@@ -86,6 +86,89 @@ class _ChatPage extends State<ChatPage> {
     super.dispose();
   }
 
+  List<Widget> data() {
+    List<Widget> list = ([Container()]);
+
+    for (int i = 0; i < fileslist.length; i++) {
+      list.add(
+        SizedBox(
+          height: 25,
+        ),
+      ) ;
+
+      list.add(
+
+    //     Padding(
+    //       padding: const EdgeInsets.all(16.0),
+    // child :Container(
+    //     alignment: Alignment.center,
+    //     child: new Image.file(
+    //       globals.fileslist[i],
+    //       fit: BoxFit.cover,
+    //     ),
+    //   ),
+    //     )
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+              alignment: Alignment.center,
+              child: new Image.file(
+                globals.fileslist[i],
+                fit: BoxFit.cover,
+              ),
+          ),
+
+              Container(
+                  margin: const EdgeInsets.all(8.0),
+                  child: !isConnected
+                      ? (const Text(
+                          '   Connecting to device...   ',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ))
+                      : (isSending
+                          ? (const Text(
+                              '   Sending image...   ',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ))
+                          : (TextButton(
+                              style: ButtonStyle(
+                                  backgroundColor:
+                                      const MaterialStatePropertyAll<Color>(
+                                          Color(0xff79d7dd)),
+                                  shape: MaterialStateProperty.all<
+                                          RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ))),
+                              onPressed: isConnected
+                                  ? () => {
+                                          _sendMessage(globals.list_of_int_images[i])
+                                      }
+                                  : null,
+                    child: Text("Send image", style: TextStyle(color: Colors.white),)
+
+                            )))),
+
+
+
+
+
+            ]
+      )
+      );
+
+    }
+    // return list;// all widget added now retrun the list here
+    return list;
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     // final List<Row> list = messages.map((_message) {
@@ -121,56 +204,46 @@ class _ChatPage extends State<ChatPage> {
       //             ? Text('Live chat with ' + serverName)
       //             : Text('Chat log with ' + serverName))),
       body: Center(
-        child: Column(
-          children: <Widget>[
-            const Spacer(),
-            Container(
-                margin: const EdgeInsets.all(8.0),
-                child: !isConnected
-                    ? (const Text(
-                        '   Connecting to device...   ',
-                        style: TextStyle(
-                          color: Colors.black,
-                        ),
-                      ))
-                    : (isSending
-                        ? (const Text(
-                            '   Sending image...   ',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ))
-                        : (TextButton(
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    const MaterialStatePropertyAll<Color>(
-                                        Color(0xff79d7dd)),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(18.0),
-                                ))),
-                            onPressed: isConnected
-                                ? () => {
-                                      globals.list_of_int_images.forEach(
-                                          (element) => _sendMessage(element))
-                                    }
-                                : null,
-                            child: const Text(
-                              '   Send image!   ',
-                              style: TextStyle(
-                                color: Color(0xFFFFFFFF),
-                              ),
-                            ),
-                          )))),
-            const Spacer(),
-            // Flexible(
-            //   child: ListView(
-            //       padding: const EdgeInsets.all(12.0),
-            //       controller: listScrollController,
-            //       children: list),
-            // ),
-          ],
+        child: ListView(
+          children: data(),
+            // const Spacer(),
+            // Container(
+            //     margin: const EdgeInsets.all(8.0),
+            //     child: !isConnected
+            //         ? (const Text(
+            //             '   Connecting to device...   ',
+            //             style: TextStyle(
+            //               color: Colors.black,
+            //             ),
+            //           ))
+            //         : (isSending
+            //             ? (const Text(
+            //                 '   Sending image...   ',
+            //                 style: TextStyle(
+            //                   color: Colors.black,
+            //                 ),
+            //               ))
+            //             : (TextButton(
+            //                 style: ButtonStyle(
+            //                     backgroundColor:
+            //                         const MaterialStatePropertyAll<Color>(
+            //                             Color(0xff79d7dd)),
+            //                     shape: MaterialStateProperty.all<
+            //                             RoundedRectangleBorder>(
+            //                         RoundedRectangleBorder(
+            //                       borderRadius: BorderRadius.circular(18.0),
+            //                     ))),
+            //                 onPressed: isConnected
+            //                     ? () => {
+            //                           globals.list_of_int_images.forEach(
+            //                               (element) => _sendMessage(element))
+            //                         }
+            //                     : null,
+            //       child: Text("Send image", style: TextStyle(color: Colors.white),)
+            //
+            //               )))),
+            // const Spacer(),
+
         ),
       ),
     );
