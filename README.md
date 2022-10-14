@@ -46,6 +46,8 @@ For the project we used a few esp32 libraries, these are:
 Further documentation and images can be found in the folder named 
 **documentation**.
 
+[Link to DESIGN document](documentation/DESIGN.md)
+
 ## License
 
 MIT
