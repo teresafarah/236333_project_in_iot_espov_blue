@@ -275,9 +275,9 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       print(rgb_list.length);
       final int index =
           _selectedItem == null ? _list.length : _list.indexOf(_selectedItem!);
-      for (int i = 0 ; i < rgb_list.length ; i++){
-        rgb_list[i] = (rgb_list[i] / 2).round();
-      }
+      // for (int i = 0 ; i < rgb_list.length ; i++){
+      //   rgb_list[i] = (rgb_list[i] / 2).round();
+      // }
       globals.list_of_int_images.insert(index, rgb_list);
 
       setState(() => this.image = compressed_image_temp);
