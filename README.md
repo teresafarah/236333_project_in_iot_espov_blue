@@ -41,6 +41,9 @@ For the project we used a few esp32 libraries, these are:
 | Adafruit_NeoPixel | Adafruit          | 1.10.6  | Manages writing to the LEDs                            |
 | esp32             | Espressif Systems | 1.0.6   | Allows working with esp32 and contains BluetoothSerial |
 
+# App User Manual
+
+When installing the app APK, you should go to the app's settings and manually enable "Nearby devices" permission.
 # Documentation
 
 Further documentation and images can be found in the folder named 
