@@ -16,7 +16,7 @@ computer science, our names are:
 - Andrew Luka
 
 The course that this project is a part of is 236333 - project
-in IOT. The course is a part od the ICST lab at the faculty.
+in IOT. The course is a part of the ICST lab at the faculty.
 
 # Repository Layout
 

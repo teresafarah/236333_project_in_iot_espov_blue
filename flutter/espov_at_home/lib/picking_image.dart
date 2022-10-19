@@ -236,7 +236,6 @@ class _AnimatedListSampleState extends State<AnimatedListSample> {
       int my_comp_width = tmp_comp_decoded.width;
       int my_comp_height = tmp_comp_decoded.height;
 
-
       final inputImg = await compressed_image_temp
           .readAsBytes(); // Converts the file to UInt8List
 
