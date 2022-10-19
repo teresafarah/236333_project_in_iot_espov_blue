@@ -101,7 +101,9 @@ int get_angle() {
   if (_did_interrupt_just_occur) {
     _did_interrupt_just_occur = false;
     _moving_average = (_moving_average * globals::BETA) + (_last_period * globals::ALPHA);
-    _moving_average = min(_moving_average, globals::MAX_PERIOD_TIME_IN_MICRO_SEC);
+    if (_moving_average > globals::MAX_PERIOD_TIME_IN_MICRO_SEC) {
+      _moving_average = globals::MAX_PERIOD_TIME_IN_MICRO_SEC;
+    }
     _max_period = max(_last_period, _max_period);
     _min_period = min(_last_period, _min_period);
     printHallLastPeriod();

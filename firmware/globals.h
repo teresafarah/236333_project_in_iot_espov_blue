@@ -16,5 +16,5 @@ const int NUM_OF_ANGLES = 180;
 const int DISTANCE_BETWEEN_ANGLES = 2;
 
 // period calculation
-const float MAX_PERIOD_TIME_IN_MICRO_SEC = 300000;
+const float MAX_PERIOD_TIME_IN_MICRO_SEC = 500000;
 }
